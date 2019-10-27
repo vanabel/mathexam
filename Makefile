@@ -6,7 +6,7 @@
 .PHONY : main pkg doc clean all FORCE_MAKE
 
 NAME = mathexam
-VER= v1.0.0
+VER= v1.1.0
 UTREE = $(shell kpsewhich --var-value TEXMFHOME)
 LOCAL = $(shell kpsewhich --var-value TEXMFLOCAL)
 # make without parameter will use make main
@@ -43,7 +43,7 @@ clean :
 distclean : 
 	latexmk -C
 	latexmk -C $(NAME).dtx
-	rm $(NAME)-main.* $(NAME).sty $(NAME).ins 
+	rm $(NAME)-main.* $(NAME).sty $(NAME).ins *.vim
 
 zip : pkg doc main
 	mkdir -p $(NAME)-$(VER) 
@@ -51,5 +51,6 @@ zip : pkg doc main
 	  README.md $(NAME)-main.{tex,pdf} \
 	  .latexmkrc Makefile $(NAME)-$(VER)
 	cp -r tractrix.pdf $(NAME)-$(VER)/
+	rm *.zip
 	zip -r $(NAME)-$(VER).zip $(NAME)-$(VER)
 	rm -r $(NAME)-$(VER)
