@@ -1,0 +1,76 @@
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+\ProvidesPackage{mathquiz}[2019/11/07 A package for math quizzes]
+\RequirePackage[margin=.5in, includeheadfoot]{geometry}
+\RequirePackage[heading]{ctex}
+\RequirePackage{mathtools,amssymb}
+\RequirePackage{multido, ifthen}
+\RequirePackage{lastpage}
+\RequirePackage{fancyhdr}
+\RequirePackage{xparse, environ}
+\ctexset {
+  section = {
+    name = {,、},
+    number = \chinese{section},
+    format = \large\bfseries\raggedright
+  }
+}
+\newif\ifmathquiz@showans\mathquiz@showansfalse
+\DeclareOption{showans}{
+  \mathquiz@showanstrue
+}
+%跳过答案对应高度的垂直空白
+\newcounter{cnt}
+\newcommand{\ansskip}[1]{
+  \setcounter{cnt}{0}
+  \whiledo {\value{cnt} <100}
+  {
+    \vspace*{.01#1}\goodbreak
+    \stepcounter{cnt}
+  }
+}
+%第一个可选参数: 答题的标题;
+%第二个可选参数: 答题在标准答案上增加的高度;
+%\begin{ans}[解][4em]
+% 解题答案
+%\end{ans}
+\newlength\ansheight
+\NewDocumentEnvironment{ans}{O{答} O{2em}}
+{\Environenv{
+  \textbf{#1}:~}{#2}
+}
+{\endEnvironenv}
+\newbox{\ansbox}
+\environbodyname\envbody
+\NewEnviron{Environenv}[2]{%
+  \savebox{\ansbox}{
+    \parbox[b]{\linewidth}{
+      #1\envbody
+    }
+  }
+  \settoheight{\ansheight}{\usebox\ansbox}
+  \ifmathquiz@showans 
+    \par#1\envbody
+  \else
+  \addtolength{\ansheight}{#2}
+    \ansskip{\ansheight}
+  \fi
+}
+%% set the header/footer
+\newcommand{\univname}[1]{\def\mathquiz@value@univname{#1}}
+\newcommand{\coursename}[1]{\def\mathquiz@value@coursename{#1}}
+\newcommand{\totaltime}[1]{\def\mathquiz@value@totaltime{#1}}
+
+\fancyhf{}
+\lhead{\mathquiz@value@univname《\mathquiz@value@coursename》课程考试}
+
+\chead{总时间: \mathquiz@value@totaltime 分钟}
+\rhead{姓名\hspace{3em}学号\hspace{7em}成绩\hspace{3em}}
+\lfoot{}
+\cfoot{第 \thepage 页\quad 共 \pageref{LastPage} 页}
+\rfoot{}
+\pagestyle{fancy}%headings,plain
+%Set the showans is the default
+%\ExecuteOptions{showans}
+\ProcessOptions\relax
+
+\endinput
