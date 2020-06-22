@@ -49,9 +49,7 @@ clean :
 distclean : 
 	latexmk -CA
 	latexmk -CA $(NAME).dtx
-	rm $(NAME)-main.* $(NAME)-main-answer.* $(NAME).sty $(NAME).ins\
-	  main.tex *.pdf *.vim
-	
+	rm $(NAME)-main.* $(NAME)-main-answer.* $(NAME).sty $(NAME).ins *.vim
 
 zip : pkg doc main
 	mkdir -p $(NAME)-$(VER) 
