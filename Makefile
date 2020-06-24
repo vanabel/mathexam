@@ -6,7 +6,7 @@
 .PHONY : main pkg maintex mainanstex doc clean all FORCE_MAKE
 
 NAME = mathexam
-VER= v2.0.0
+VER= v2.1.0
 UTREE = $(shell kpsewhich --var-value TEXMFHOME)
 LOCAL = $(shell kpsewhich --var-value TEXMFLOCAL)
 # make without parameter will use make main

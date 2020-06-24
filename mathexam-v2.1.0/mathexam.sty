@@ -14,10 +14,14 @@
 %% ----------------------------------------------------------------
 %% 
 \NeedsTeXFormat{LaTeX2e}[2005/12/01]
-\ProvidesPackage{mathexamp}
+\ProvidesPackage{mathexam}
+[2020/06/21 v.2.0.0 一个数学类考试宏包]
+\NeedsTeXFormat{LaTeX2e}[2005/12/01]
+\ProvidesPackage{mathexam}
 [2020/06/21 v.2.0.0 一个数学类考试宏包]
 \NeedsTeXFormat{LaTeX2e}[1996/06/01]
-\ProvidesPackage{mathexam}[2018/10/28 A package for create math examination v1.0.0]
+\ProvidesPackage{mathexam}[2020/06/24 A package for create math examination
+v2.1.0]
 \RequirePackage{mathtools, amssymb, amsthm}
 \RequirePackage[contents={}]{background}
 \RequirePackage{ctex}
@@ -33,10 +37,9 @@
 \RequirePackage{zhnumber}
 \RequirePackage{datatool}
 \IfFileExists{\jobname.dat}{
-  \DTLsetseparator{,}
   \DTLloaddb{\jobname}{\jobname.dat}
   }{
-  \DTLnewdb{\jobname}
+ \DTLnewdb{\jobname}
 }
 
 \newif\ifmathexam@showans\mathexam@showansfalse % 是否显示答案
@@ -66,16 +69,24 @@
 \newcommand{\director}[1]{\def\mathexam@value@director{#1}}
 \newcommand{\dean}[1]{\def\mathexam@value@dean{#1}}
 
-\newcommand{\mathexam@value@semester}{\ifnum\the\month<9\ifnum\the\month>2 {2}\fi\else {1}\fi}
-\newcommand{\mathexam@lasttwoofyear}[1]{% #1 is the offset
+\newcommand{\mathexam@value@semester}{%
+\ifnum\the\month<9\ifnum\the\month>2 {2}\fi\else {1}\fi%
+}%
+\newcommand{\mathexam@lasttwoofyear}[1]{%#1 is the offset
   \expandafter\mathexam@getlasttwo\number\numexpr\year+(#1)\relax\relax
 }
 \def\mathexam@getlasttwo#1#2#3#4\relax{#3#4}
-\def\totalnumpages{\@ifundefined{mathexam@totalpages}%
-  {\mbox{\normalfont\bfseries ??}}%
-  \mathexam@totalpages
+\def\tobecalculate{\mbox{??}}
+\def\totalnumpages{%
+  \@ifundefined{mathexam@totalpages}{%
+    \tobecalculate%
+    }{%
+    \mathexam@totalpages%
+  }%
 }
-\newcommand{\mathexam@barfill}{\leavevmode\xleaders\hb@xt@1em{\hss | \hss }\hfill\kern\z@}
+\newcommand{\mathexam@barfill}{%
+  \leavevmode\xleaders\hb@xt@1em{\hss | \hss }\hfill\kern\z@%
+}
 \newcommand{\mathexam@barfilltext}[1]{~\rotatebox[origin=c]{270}{#1}~}
 
 \newlength\myleft
@@ -203,18 +214,19 @@
     \begin{center}
       {\zihao{-2}\heiti\mathexam@value@university\quad
       \mathexam@value@school}\\[2em]
-      {\zihao{-3}\heiti《\mathexam@value@course 》\quad
-      课程试题【\mathexam@value@AorB】卷\ifmathexam@showans 参考答案 \fi}\\[2em]
+      {%
+\zihao{-3}\heiti《\mathexam@value@course 》\quad
+课程试题【\mathexam@value@AorB】卷\ifmathexam@showans 参考答案 \fi%
+      }\\[2em]
     \end{center}
     \zihao{-4}
-    %\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}|c|c|c|c|c|c|c|c|c|c|c|c|}
     \newcolumntype{P}{>{\centering\arraybackslash}X}
     \newcolumntype{L}{>{\flushleft\arraybackslash}X}
     \begin{tabularx}{\linewidth}{|*{12}{P|}}
       \hline
       \multicolumn{8}{|c}{
-        20\mathexam@lasttwoofyear{-1} 至 20\mathexam@lasttwoofyear{0} 学年\qquad
-        第\mathexam@value@semester 学期
+        20\mathexam@lasttwoofyear{-1} 至 20\mathexam@lasttwoofyear{0} 学年
+\qquad 第\mathexam@value@semester 学期
       }                                                            &
       \multicolumn{4}{|c|}{\mathexam@value@finalmiddle\quad 考试} \\
       \hline
@@ -243,24 +255,44 @@
       \hline
     \end{tabularx}
 
-    \noindent \zihao{5}阅卷须知: 阅卷用红色墨水笔书写，得分用阿拉伯数字写在每小题题号前，
-    用正分表示，不得分则在题号前写0; 大题得分登录在对应的分数框内; 统一命题的课程应集体阅卷，
-    流水作业; 阅卷后要进行复核，发现漏评、漏记或总分统计错误应及时更正;
-    对评定分数或统分记录进行修改时，修改人必须签名。
+    \noindent \zihao{5}阅卷须知: 阅卷用红色墨水笔书写，%
+    得分用阿拉伯数字写在每小题题号前，%
+    用正分表示，不得分则在题号前写0; %
+    大题得分登录在对应的分数框内;%
+    统一命题的课程应集体阅卷，%
+    流水作业; %
+    阅卷后要进行复核，发现漏评、漏记或总分统计错误应及时更正;%
+    对评定分数或统分记录进行修改时，修改人必须签名。%
     \begin{center}
       \setlength\fboxsep{1em}
       \setlength\fboxrule{1pt}
-      \fbox{\zihao{4}\heiti{特别提醒: 学生必须遵守课程考核纪律， 违者将受到严肃处理。}}
+      \fbox{%
+\zihao{4}\heiti{%
+  特别提醒: 学生必须遵守课程考核纪律，%
+违者将受到严肃处理。}
+      }
     \end{center}
-    \DTLsumforkeys{\jobname}{problem}{\totalproblems}
-    \DTLsumforkeys{\jobname}{score}{\totalscores}
-    \noindent\zihao{-4}本试卷分为\textbf{\DTLrowcount{\jobname}}部分、
-    共有\textbf{\totalnumpages}页、\textbf{\totalproblems}道试题，
-    共计\textbf{\totalscores} 分。在答题之前，请认真阅读题目，按题目要求解答。
-    解答写在题目之后预留的空白处，写不下时可以加纸，但请务必写清题号，交卷时一起交上来。
-    %\end{tabular*}
-  }
-\ignorespace}%
+    \ifnum0\DTLcolumncount{\jobname}>2%
+      \DTLsumforkeys{\jobname}{problem}{\totalproblems}%
+    \else%
+      \let\totalproblems\tobecalculate%
+    \fi%
+    \ifnum0\DTLcolumncount{\jobname}>2%
+      \DTLsumforkeys{\jobname}{score}{\totalscores}%
+    \else%
+      \let\totalscores\tobecalculate%
+    \fi%
+    \noindent\zihao{-4}本试卷分为%
+    \ifnum0\DTLcolumncount{\jobname}>2%
+      \textbf{\DTLrowcount{\jobname}}%
+    \else%
+      \textbf{\tobecalculate}%
+    \fi%
+    部分、共有\textbf{\totalnumpages}页、\textbf{\totalproblems}道试题，%
+    共计\textbf{\totalscores}分。在答题之前，请认真阅读题目，按题目要求解答。%
+    解答写在题目之后预留的空白处，写不下时可以加纸，%
+    但请务必写清题号，交卷时一起交上来。
+  }\ignorespace}%
 
 \fancypagestyle{plain}{
   \ifsidebyside
@@ -302,19 +334,26 @@
   }
 }%
 
-%% \makepart/\makedata 题型/数据标题
+%% \makedata 题型/数据标题
 \def\solutionname{解}
 \newcounter{problem}
 \newcounter{mypart}
 \newcounter{score}
 \newcounter{prescore}
-
+\newcounter{totalblanks}
 \setcounter{mypart}{0}
 \setcounter{problem}{0}
 \NewDocumentEnvironment{makepart}{O{%
-    共\IfFileExists{\jobname.dat}{\DTLfetch{\jobname}{mypart}{\themypart}{problem}}{} 题，%
-    \ifnum#3>0 每题 #3 分,\fi%
-  共计\IfFileExists{\jobname.dat}{\DTLfetch{\jobname}{mypart}{\themypart}{score}}{} 分}%
+    \ifnum0\DTLrowcount{\jobname}<\numexpr\themypart\else%
+    \edtlgetrowforvalue{\jobname}{1}{\themypart}%
+    \dtlgetentryfromcurrentrow{\totalprobinpart}{2}%
+    \dtlgetentryfromcurrentrow{\totalscoreinpart}{3}%
+    \fi%
+    共\@ifundefined{totalprobinpart}{\tobecalculate}{\totalprobinpart}题，%
+    \edef\blanknamegiven{#2}\edef\blanknameset{填空题}%
+    \ifnum#3>0每\ifx\blanknamegiven\blanknameset{}空\else{}题\fi{#3}分,\fi%
+    共计\@ifundefined{totalscoreinpart}{\tobecalculate}{\totalscoreinpart}分%
+}%
   m%
   O{0}%
   }{
@@ -323,25 +362,52 @@
   \setcounter{problem}{0}
   \setcounter{score}{0}
   \setcounter{prescore}{#3}
-  \noindent\zihao{-4}\chinese{mypart}、#2\if\empty#1\else(#1)\fi\par%
+  \setcounter{totalblanks}{0}
+  \noindent\zihao{-4}\chinese{mypart}、#2%
+  \if\relax\detokenize{#1}\relax\else(#1)\fi%
+  \par%
   \phantomsection
   \addcontentsline{toc}{section}{\chinese{mypart}、#2}
   }{
-  \IfFileExists{\jobname.dat}{
-    \edtlgetrowforvalue{\jobname}{1}{\themypart}
-    \dtlupdateentryincurrentrow{mypart}{\themypart}
-    \dtlupdateentryincurrentrow{problem}{\theproblem}
-    \dtlupdateentryincurrentrow{score}{\thescore}
-    }{
-    \DTLnewrow{\jobname}
+  \ifnum\thetotalblanks>0
+    \addtocounter{score}{\the\numexpr(\thetotalblanks-\theproblem)*\theprescore}
+  \fi
+  \ifnum\DTLrowcount{\jobname}>\numexpr\themypart
     \dtlexpandnewvalue
-    \DTLnewdbentry{\jobname}{mypart}{\themypart}
-    \DTLnewdbentry{\jobname}{problem}{\theproblem}
-    \DTLnewdbentry{\jobname}{score}{\thescore}
-  }
+    \edtlgetrowforvalue{\jobname}{1}{\themypart}
+    %this seems weird just because update is not expand the value
+    \dtlremoveentryincurrentrow{1}
+    \dtlappendentrytocurrentrow{mypart}{\themypart}
+    \dtlremoveentryincurrentrow{2}
+    \dtlappendentrytocurrentrow{problem}{\theproblem}
+    \dtlremoveentryincurrentrow{3}
+    \dtlappendentrytocurrentrow{score}{\thescore}
+    \dtlrecombine
+  \else
+    \ifnum\DTLrowcount{\jobname}=\numexpr\themypart
+      \dtlexpandnewvalue
+      \edtlgetrowforvalue{\jobname}{1}{\themypart}
+      %this seems weird just because update is not expand the value
+      \dtlremoveentryincurrentrow{1}
+      \dtlappendentrytocurrentrow{mypart}{\themypart}
+      \dtlremoveentryincurrentrow{2}
+      \dtlappendentrytocurrentrow{problem}{\theproblem}
+      \dtlremoveentryincurrentrow{3}
+      \dtlappendentrytocurrentrow{score}{\thescore}
+      \dtlrecombine
+    \else
+      \DTLnewrow{\jobname}
+      \dtlexpandnewvalue
+      \DTLnewdbentry{\jobname}{mypart}{\themypart}
+      \DTLnewdbentry{\jobname}{problem}{\theproblem}
+      \DTLnewdbentry{\jobname}{score}{\thescore}
+    \fi
+    \fi
   \setcounter{prescore}{0}
 \par}
-\newcommand{\centertext}{\leavevmode\xleaders\hb@xt@.25em{\hss - \hss }\hfill\kern\z@}
+\newcommand{\centertext}{%
+  \leavevmode\xleaders\hb@xt@.25em{\hss - \hss }\hfill\kern\z@%
+}
 \newcommand{\makedata}[1]{
   \noindent\centertext~{\heiti\zihao{4}附录\quad#1~\centertext}\par
   \smallskip\ignorespaces\noindent
@@ -354,7 +420,6 @@
   \noindent\arabic{problem}.\,\ignorespaces
   \ifnum#1>0($#1'$)\addtocounter{score}{#1}\fi
   }{
-  %\addtocounter{score}{#1}
   \addtocounter{score}{\theprescore}
   \par
 }
@@ -365,16 +430,29 @@
 \newcommand{\cdotfill}{%
   \leavevmode\xleaders\hbox to 0.5em{\hss$\cdot$\hss}\hfill\kern0pt\relax
 }
-\newcommand{\true}{\unskip\nobreak\cdotfill(\makebox[1.5em]{\answer{$\checkmark$}})}
-\newcommand{\false}{\unskip\nobreak\cdotfill(\makebox[1.5em]{\answer{\sffamily x}})}
+\newcommand{\true}{%
+  \unskip\nobreak\cdotfill(\makebox[1.5em]{\answer{$\checkmark$}})%
+}%
+\newcommand{\false}{%
+  \unskip\nobreak\cdotfill(\makebox[1.5em]{\answer{\sffamily x}})%
+}%
 %% 填空题
-\newcommand{\ulinefill}[1]{\xleaders\hbox{\uline{\vphantom{#1}\kern1pt}}\hfill\kern0pt}
-\newcommand{\fillin}[2][1em]{\uline{\hspace{#1}\answer{#2}\hspace{#1}}}
+\newcommand{\ulinefill}[1]{%
+  \xleaders\hbox{\uline{\vphantom{#1}\kern1pt}}\hfill\kern0pt%
+}
+\newcommand{\fillin}[2][1em]{%
+  \stepcounter{totalblanks}
+  \uline{\hspace{#1}\answer{#2}\hspace{#1}}
+}
 \newcommand{\fillout}[1]{%
+  \stepcounter{totalblanks}
   \allowbreak\hbox{}\nobreak\ulinefill{#1}\uline{\answer{#1}}\ulinefill{#1}
 }
 %% 选择题
-\newcommand{\pickout}[1]{\unskip\nobreak\cdotfill(\makebox[1.5em]{\answer{#1}})}
+\newcommand{\pickout}[1]{%
+  %\addtocounter{score}{\theprescore}
+  \unskip\nobreak\cdotfill(\makebox[1.5em]{\answer{#1}})
+}
 \newlength{\my@item@len}
 \newcommand\my@item@temp{%
   \unskip\cr\stepcounter{choice}(\Alph{choice})%
@@ -516,7 +594,8 @@
   \begin{tikzpicture}[%
     remember picture,overlay,font=\sffamily\fontsize{100pt}{100pt}\selectfont%
     ]%
-    \node[text=lightgray!20] at (current page text area.center) {草\quad 稿\quad 纸};
+    \node[text=lightgray!20, rotate=45] at (current page text area.center)%
+    {草\quad 稿\quad 纸};
 \end{tikzpicture}}
 \ifsidebyside
   \preto{\@enddocumenthook}{%
@@ -544,8 +623,20 @@
     {\string\gdef\string\mathexam@totalpages{\arabic{page}}}%
   \fi
   \DTLsavedb{\jobname}{\jobname.dat}
+  \DTLsavetexdb{\jobname}{\jobname.dbtex}
   \IfFileExists{\jobname.dat}{}{\DTLdisplaydb{\jobname}}
 }
+\ifmathexam@showans{%
+    \ifnum\shellescape=1
+      \immediate\write18{cp \jobname.pdf \jobname-参考答案.pdf}
+    \else
+      \message{^^J Warning: **********************^^J}
+      \message{^^J 请使用`xelatex -shell-escape \jobname.tex`%
+      编译来自动重命名^^J}
+      \message{^^J *******************************^^J}
+    \fi
+  }
+\fi
 %% 
 %% Copyright (C) 2009 by You <van141.abel(AT)gmail.com>
 %% 

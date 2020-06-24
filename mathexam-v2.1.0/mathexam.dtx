@@ -148,16 +148,16 @@ and the derived files           mathexam.ins,
 \ProvidesFile{\jobname.dtx}
 %</driver>
 %<package>\NeedsTeXFormat{LaTeX2e}[2005/12/01]
-%<package>\ProvidesPackage{mathexamp}
+%<package>\ProvidesPackage{mathexam}
 %<*package>
 [2020/06/21 v.2.0.0 一个数学类考试宏包]
 %</package>
 %
 %<*driver>
-\documentclass{ltxdoc}
+\documentclass{ltxdoc}%[draft]
 \usepackage{palatino}
-\usepackage{ctex}
-\usepackage[margin=1in, includeheadfoot]{geometry}
+\usepackage[cs4size]{ctex}
+\usepackage[margin=1in, left=1.2in, includeheadfoot]{geometry}
 \usepackage[numbered]{hypdoc}
 \usepackage{metalogo}
 
@@ -256,6 +256,36 @@ and the derived files           mathexam.ins,
 % \DoNotIndex{\thinspace,\addcontentsline,\AddEverypageHook,\addtolength,\allowbreak,\Alph}
 % \DoNotIndex{\ansskip, \answer@cell@strut,\answer@lines,\answer@lines@add}
 % \DoNotIndex{\answer@lines@temp, \answer@number@hided,\arabic,\arraybackslash}
+% \DoNotIndex{\myheader,\myheaderright,\myinner,\myleft,\myouter,\mytop,\newcolumntype}
+% \DoNotIndex{\backgroundsetup,\BgMaterial,\bgroup,\blanknamegiven,\blanknameset}
+% \DoNotIndex{\cdotfill,\centering,\centertext,\checkmark,\chinese,\clearpage,\course}
+% \DoNotIndex{\detokenize,\dtlappendentrytocurrentrow,\DTLcolumncount,\DTLdisplaydb}
+% \DoNotIndex{\dtlgetentryfromcurrentrow,\dtlexpandnewvalue,\DTLloaddb,\DTLnewdb}
+% \DoNotIndex{\DTLnewdbentry,\DTLnewrow,\dtlrecombine,\dtlremoveentryincurrentrow}
+% \DoNotIndex{\DTLrowcount,\DTLsavedb,\DTLsumforkeys,\edtlgetrowforvalue,\egroup}
+% \DoNotIndex{\DTLsavetexdb,\fancyhead,\fancypagestyle,\fbox,\fboxrule,\fboxsep}
+% \DoNotIndex{\flushleft,\gdef,\goodbreak,\halign,\hb@xt@,\hbox,\headertextlen,\heiti}
+% \DoNotIndex{\hfil,\hss,\if,\if@filesw,\IfFileExists,\ifmathexam@fixlast,\ifmathexam@showans}
+% \DoNotIndex{\ifmmode,\ifnumgreater,\ifsidebyside,\ifthenelse,\ifx,\ignorespace,\ignorespaces}
+% \DoNotIndex{\immediate,\isodd,\kern,\leavevmode,\lefttable,\let,\makepart,\mathexam@barfill}
+% \DoNotIndex{\mathexam@barfilltext,\mathexam@fixlastfalse,\mathexam@fixlasttrue}
+% \DoNotIndex{\mathexam@lasttwoofyear,\mathexam@showansfalse,,\mathexam@getlasttwo}
+% \DoNotIndex{\mathexam@totalpages,\mathexam@value@AorB,\mathexam@value@course}
+% \DoNotIndex{\mathexam@showanstrue,\mathexam@value@dean,\mathexam@value@degree}
+% \DoNotIndex{\mathexam@value@director,\mathexam@value@examiner,\mathexam@value@finalmiddle}
+% \DoNotIndex{\mathexam@value@grade,\mathexam@value@major,\mathexam@value@openclose}
+% \DoNotIndex{\mathexam@value@school,\mathexam@value@semester,\mathexam@value@totalstudent}
+% \DoNotIndex{\mathexam@value@totaltime,\mathexam@value@university,\mbox,\message,\multicolumn}
+% \DoNotIndex{\my@item@box,\my@item@len,\my@item@par,\my@item@temp,\mybottom,\myhead}
+% \DoNotIndex{\newrobustcmd,\newgeometry,\nobreak,\node,\noindent,\par,\parindent,\parskip}
+% \DoNotIndex{\phantomsection,\phantom,\preto,\qed,\restoregeometry,\rotatebox,\sffamily}
+% \DoNotIndex{\shellescape,\sidebysidefalse,\sidebysidetrue,\smallskip,\stepcounter}
+% \DoNotIndex{\string,\tabcolsep,\textheight,\themypart,\thepage,\theprescore,\theproblem}
+% \DoNotIndex{\thescore,\thetotalblanks,\tobecalculate,\totalnumpages,\totalprobinpart}
+% \DoNotIndex{\totalproblems,\totalscoreinpart,\totalscores,\totalstu,\totaltime,\uline}
+% \DoNotIndex{\unlessboolexpr,\unskip,\ulinefill,\vbox,\vphantom,\vspace,\whileboolexpr}
+% \DoNotIndex{\whiledo,\write,\xdef,\xleaders,\z@,\zihao}
+% \DoNotIndex{}
 % \DoNotIndex{}
 % \expandafter\DoNotIndex\expandafter{\string\&}
 % \expandafter\DoNotIndex\expandafter{\string\{}
@@ -442,15 +472,13 @@ and the derived files           mathexam.ins,
 %
 %\DescribeEnv{makepart}
 % |makepart|环境会生成每个部分的标题, 它有三个参数, 格式为
-% \oarg{contents}\marg{title}\oarg{score per question}, 即第一个可选参数为标题的说明, 
+%
+% \oarg{contents}\marg{title}\oarg{score/question}, 即第一个可选参数为标题的说明, 
 % 如果省略, 默认会根据第三个参数是否为零以及本部分小题的个数和总分. 当然你也可以手动指定.
-% 第二个参数就是这部分的标题, 第三个参数默认为|0|, 若大于零则表示这部分每小题的分值. 
-% 例如选择题、判断题, 每小题都是一样的分. 
+% 第二个参数就是这部分的标题, 第三个参数默认为|0|, 若大于零则表示这部分每小题或者每空的分值. 
+% 例如选择题、判断题的每小题以及填空题点每空都是一样的分. 
 %
 %如果第三个参数为零, 则此时需要为每个小题指定分数. 具体方法参考|problem|环境的使用.
-%
-%如果同时指定了第三个参数, 和每小题的参数, 则该小题的分值为这两个参数之和. 
-%一般而言, 我们应该避免这样使用, 因为会产生歧义.
 %
 %本环境还会在环境结束时根据每小题分值自动计算这部分的小题总数以及这部分的总分, 
 %并利用|datatool|宏包写入到数据库, 你可以查看|\jobname.dat|文件, 其中记录了具体的数据. 
@@ -473,16 +501,17 @@ and the derived files           mathexam.ins,
 %我们将在这节用具体例子说明上面的命令、环境怎么使用.
 %\subsection{判断题}
 %\begin{verbatim}
-%\makepart{判断题}[2]
+%\begin{makepart}{判断题}[2]
 %\begin{problem}
 % 假设直角三角形的两直角边边长分别为3和4, 则斜边长度为5. \true
 %\end{problem}
+%\end{makepart}
 %\end{verbatim}
 %这将生成判断题部分的标题, 而且用小括号说明本部分:(共1题, 每题2分, 共计2分). 
 %每个|problem|环境对应着一个小题, |\true|这种该小题的答案为真. 
 %\subsection{选择题}
 %\begin{verbatim}
-%\makepart{选择题}[2]
+%\begin{makepart}{选择题}[2]
 %\begin{problem}
 % 假设直角三角形的两直角边边长分别为3和4, 则斜边长度为\pickout{C}
 %\begin{abcd}
@@ -492,22 +521,26 @@ and the derived files           mathexam.ins,
 % \item 4.
 %\end{abcd}
 %\end{problem}
+%\end{makepart}
 %\end{verbatim}
-%这会生成选择题部分的标题, 类似前面的判断题, 会自动使用括号说明本部分小题的总数、分值情况. 
+%这会生成选择题部分的标题, 类似前面的判断题, 
+%会自动使用括号说明本部分小题的总数、分值情况. 
 %每个小题用|problem|环境出题, 其中正确答案用|\pickout|命令输出, 
 %而备选项用|aabcd|环境输出, 每个选项用|\item|输出.
 %\subsection{填空题}
 %\begin{verbatim}
-%\makepart{填空题}
+%\begin{makepart}{填空题}
 %\begin{problem}[2]
 % 假设直角三角形的两直角边边长分别为3和4, 则斜边长度为\fillin{5}.
 %\end{problem}
+%\end{makepart}
 %\end{verbatim}
-%类似地, 这里给出了一个填空题, 设置了本题的分值为2分. 这是因为一个小题往往有多个空, 
+%类似地, 这里给出了一个填空题, 设置了本题的分值为2分. 
+%这是因为一个小题往往有多个空, 
 %故没有用统一设置分值的方法. 如果用|\fillout{C}|则答案下的横线将填充到行末.
 %\subsection{计算题}
 %\begin{verbatim}
-%\makepart{计算题}
+%\begin{makepart}{计算题}
 %\begin{problem}[10]
 % 假设直角三角形的两直角边边长分别为3和4, 则斜边长度为?
 %\begin{solution}[10em]
@@ -515,8 +548,10 @@ and the derived files           mathexam.ins,
 % 因此斜边为$\sqrt{3^3+4^2}=5$.\score{5}
 %\end{solution}
 %\end{problem}
+%\end{makepart}
 %\end{verbatim}
-%由于没有给定第三个可选参数, |\makepart|命令将生成本部分的标题, 且根据本部分的小题数和总分值,
+%由于没有给定第三个可选参数, |makepart|环境将生成本部分的标题, 
+%且根据本部分的小题数和总分值,
 %自动生成标题说明: (共1题, 共计10分). 
 %
 %每个问题用|problem|环境给出, 环境后的可选参数\oarg{10}表示本小题10分. 
@@ -527,7 +562,7 @@ and the derived files           mathexam.ins,
 %最后, 答案中的|\score|命令表示这步的分值.
 %\subsection{证明题}
 %\begin{verbatim}
-%\makepart{证明题}
+%\begin{makepart}{证明题}
 %\renewcommand{\solutionname}{证}
 %\begin{problem}[10]
 % 假设直角三角形的两直角边边长分别为3和4. 证明其斜边长度为5.
@@ -536,6 +571,7 @@ and the derived files           mathexam.ins,
 % 因此斜边为$\sqrt{3^3+4^2}=5$.\score{5}
 %\end{solution}
 %\end{problem}
+%\end{makepart}
 %\end{verbatim}
 %这里和前面计算题完全类似, 只是我们用|\renewcommand{\solutionname}{证}|
 %更改了本部分的解答开头文字都为``证''. 
@@ -544,8 +580,12 @@ and the derived files           mathexam.ins,
 %\section{源码参考}
 %    \begin{macrocode}
 %<*package>
+\NeedsTeXFormat{LaTeX2e}[2005/12/01]
+\ProvidesPackage{mathexam}
+[2020/06/21 v.2.0.0 一个数学类考试宏包]
 \NeedsTeXFormat{LaTeX2e}[1996/06/01]
-\ProvidesPackage{mathexam}[2018/10/28 A package for create math examination v1.0.0]
+\ProvidesPackage{mathexam}[2020/06/24 A package for create math examination 
+v2.1.0]
 \RequirePackage{mathtools, amssymb, amsthm}
 \RequirePackage[contents={}]{background}
 \RequirePackage{ctex}
@@ -561,10 +601,9 @@ and the derived files           mathexam.ins,
 \RequirePackage{zhnumber}
 \RequirePackage{datatool}
 \IfFileExists{\jobname.dat}{
-  \DTLsetseparator{,}
   \DTLloaddb{\jobname}{\jobname.dat}
   }{
-  \DTLnewdb{\jobname}
+ \DTLnewdb{\jobname}
 }
 
 \newif\ifmathexam@showans\mathexam@showansfalse % 是否显示答案
@@ -577,7 +616,6 @@ and the derived files           mathexam.ins,
 \DeclareOption{a3paper}{\sidebysidetrue}
 
 \ProcessOptions\relax
-
 
 \newcommand{\university}[1]{\def\mathexam@value@university{#1}}
 \newcommand{\school}[1]{\def\mathexam@value@school{#1}}
@@ -595,16 +633,24 @@ and the derived files           mathexam.ins,
 \newcommand{\director}[1]{\def\mathexam@value@director{#1}}
 \newcommand{\dean}[1]{\def\mathexam@value@dean{#1}}
 
-\newcommand{\mathexam@value@semester}{\ifnum\the\month<9\ifnum\the\month>2 {2}\fi\else {1}\fi}
-\newcommand{\mathexam@lasttwoofyear}[1]{% #1 is the offset
+\newcommand{\mathexam@value@semester}{%
+\ifnum\the\month<9\ifnum\the\month>2 {2}\fi\else {1}\fi%
+}%
+\newcommand{\mathexam@lasttwoofyear}[1]{%#1 is the offset
   \expandafter\mathexam@getlasttwo\number\numexpr\year+(#1)\relax\relax
 }
 \def\mathexam@getlasttwo#1#2#3#4\relax{#3#4}
-\def\totalnumpages{\@ifundefined{mathexam@totalpages}%
-  {\mbox{\normalfont\bfseries ??}}%
-  \mathexam@totalpages
+\def\tobecalculate{\mbox{??}}
+\def\totalnumpages{%
+  \@ifundefined{mathexam@totalpages}{%
+    \tobecalculate%
+    }{%
+    \mathexam@totalpages%
+  }%
 }
-\newcommand{\mathexam@barfill}{\leavevmode\xleaders\hb@xt@1em{\hss | \hss }\hfill\kern\z@}
+\newcommand{\mathexam@barfill}{%
+  \leavevmode\xleaders\hb@xt@1em{\hss | \hss }\hfill\kern\z@%
+}
 \newcommand{\mathexam@barfilltext}[1]{~\rotatebox[origin=c]{270}{#1}~}
 
 \newlength\myleft
@@ -649,7 +695,7 @@ and the derived files           mathexam.ins,
           \AddToShipoutPictureBG*{
             % Add background picture to every page/ *version for current page
             \begin{tikzpicture}[overlay,remember picture]
-              \draw [line width=1pt ] 
+              \draw [line width=1pt ]
               ($(current page text area.north west)-(.6\myinner,0pt)$)
               to
               ($(current page text area.north east)$);
@@ -705,7 +751,7 @@ and the derived files           mathexam.ins,
           \AddToShipoutPictureBG*{
             % Add background picture to every page/ *version for current page
             \begin{tikzpicture}[overlay,remember picture]
-              \draw [line width=1pt ] 
+              \draw [line width=1pt ]
               ($(current page text area.north west)-0.8*(\myleft,0)$)
               to
               ($(current page text area.north east)-0.8*(\myleft,0)$);
@@ -732,18 +778,19 @@ and the derived files           mathexam.ins,
     \begin{center}
       {\zihao{-2}\heiti\mathexam@value@university\quad
       \mathexam@value@school}\\[2em]
-      {\zihao{-3}\heiti《\mathexam@value@course 》\quad 
-      课程试题【\mathexam@value@AorB】卷\ifmathexam@showans 参考答案 \fi}\\[2em]
+      {%
+	\zihao{-3}\heiti《\mathexam@value@course 》\quad
+	课程试题【\mathexam@value@AorB】卷\ifmathexam@showans 参考答案 \fi%
+      }\\[2em]
     \end{center}
     \zihao{-4}
-    %\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}|c|c|c|c|c|c|c|c|c|c|c|c|}
     \newcolumntype{P}{>{\centering\arraybackslash}X}
     \newcolumntype{L}{>{\flushleft\arraybackslash}X}
     \begin{tabularx}{\linewidth}{|*{12}{P|}}
       \hline
       \multicolumn{8}{|c}{
-        20\mathexam@lasttwoofyear{-1} 至 20\mathexam@lasttwoofyear{0} 学年\qquad
-        第\mathexam@value@semester 学期 
+        20\mathexam@lasttwoofyear{-1} 至 20\mathexam@lasttwoofyear{0} 学年
+	\qquad 第\mathexam@value@semester 学期
       }                                                            &
       \multicolumn{4}{|c|}{\mathexam@value@finalmiddle\quad 考试} \\
       \hline
@@ -772,24 +819,44 @@ and the derived files           mathexam.ins,
       \hline
     \end{tabularx}
 
-    \noindent \zihao{5}阅卷须知: 阅卷用红色墨水笔书写，得分用阿拉伯数字写在每小题题号前，
-    用正分表示，不得分则在题号前写0; 大题得分登录在对应的分数框内; 统一命题的课程应集体阅卷，
-    流水作业; 阅卷后要进行复核，发现漏评、漏记或总分统计错误应及时更正; 
-    对评定分数或统分记录进行修改时，修改人必须签名。
+    \noindent \zihao{5}阅卷须知: 阅卷用红色墨水笔书写，%
+    得分用阿拉伯数字写在每小题题号前，%
+    用正分表示，不得分则在题号前写0; %
+    大题得分登录在对应的分数框内;%
+    统一命题的课程应集体阅卷，%
+    流水作业; %
+    阅卷后要进行复核，发现漏评、漏记或总分统计错误应及时更正;%
+    对评定分数或统分记录进行修改时，修改人必须签名。%
     \begin{center}
       \setlength\fboxsep{1em}
       \setlength\fboxrule{1pt}
-      \fbox{\zihao{4}\heiti{特别提醒: 学生必须遵守课程考核纪律， 违者将受到严肃处理。}}
+      \fbox{%
+	\zihao{4}\heiti{%
+	  特别提醒: 学生必须遵守课程考核纪律，%
+	违者将受到严肃处理。}
+      }
     \end{center}
-    \DTLsumforkeys{\jobname}{problem}{\totalproblems}
-    \DTLsumforkeys{\jobname}{score}{\totalscores}
-    \noindent\zihao{-4}本试卷分为\textbf{\DTLrowcount{\jobname}}部分、
-    共有\textbf{\totalnumpages}页、\textbf{\totalproblems}道试题，
-    共计\textbf{\totalscores} 分。在答题之前，请认真阅读题目，按题目要求解答。
-    解答写在题目之后预留的空白处，写不下时可以加纸，但请务必写清题号，交卷时一起交上来。
-    %\end{tabular*}
-  }
-\ignorespace}%
+    \ifnum0\DTLcolumncount{\jobname}>2%
+      \DTLsumforkeys{\jobname}{problem}{\totalproblems}%
+    \else%
+      \let\totalproblems\tobecalculate%
+    \fi%
+    \ifnum0\DTLcolumncount{\jobname}>2%
+      \DTLsumforkeys{\jobname}{score}{\totalscores}%
+    \else%
+      \let\totalscores\tobecalculate%
+    \fi%
+    \noindent\zihao{-4}本试卷分为%
+    \ifnum0\DTLcolumncount{\jobname}>2%
+      \textbf{\DTLrowcount{\jobname}}%
+    \else%
+      \textbf{\tobecalculate}%
+    \fi%
+    部分、共有\textbf{\totalnumpages}页、\textbf{\totalproblems}道试题，%
+    共计\textbf{\totalscores}分。在答题之前，请认真阅读题目，按题目要求解答。%
+    解答写在题目之后预留的空白处，写不下时可以加纸，%
+    但请务必写清题号，交卷时一起交上来。
+  }\ignorespace}%
 
 \fancypagestyle{plain}{
   \ifsidebyside
@@ -831,19 +898,26 @@ and the derived files           mathexam.ins,
   }
 }%
 
-%% \makepart/\makedata 题型/数据标题
+%% \makedata 题型/数据标题
 \def\solutionname{解}
 \newcounter{problem}
 \newcounter{mypart}
 \newcounter{score}
 \newcounter{prescore}
-
+\newcounter{totalblanks}
 \setcounter{mypart}{0}
 \setcounter{problem}{0}
 \NewDocumentEnvironment{makepart}{O{%
-    共\IfFileExists{\jobname.dat}{\DTLfetch{\jobname}{mypart}{\themypart}{problem}}{} 题，%
-    \ifnum#3>0 每题 #3 分,\fi%
-  共计\IfFileExists{\jobname.dat}{\DTLfetch{\jobname}{mypart}{\themypart}{score}}{} 分}%
+    \ifnum0\DTLrowcount{\jobname}<\numexpr\themypart\else%
+    \edtlgetrowforvalue{\jobname}{1}{\themypart}%
+    \dtlgetentryfromcurrentrow{\totalprobinpart}{2}%
+    \dtlgetentryfromcurrentrow{\totalscoreinpart}{3}%
+    \fi%
+    共\@ifundefined{totalprobinpart}{\tobecalculate}{\totalprobinpart}题，%
+    \edef\blanknamegiven{#2}\edef\blanknameset{填空题}%
+    \ifnum#3>0每\ifx\blanknamegiven\blanknameset{}空\else{}题\fi{#3}分,\fi%
+    共计\@ifundefined{totalscoreinpart}{\tobecalculate}{\totalscoreinpart}分%
+}%
   m%
   O{0}%
   }{
@@ -852,25 +926,52 @@ and the derived files           mathexam.ins,
   \setcounter{problem}{0}
   \setcounter{score}{0}
   \setcounter{prescore}{#3}
-  \noindent\zihao{-4}\chinese{mypart}、#2\if\empty#1\else(#1)\fi\par%
+  \setcounter{totalblanks}{0}
+  \noindent\zihao{-4}\chinese{mypart}、#2%
+  \if\relax\detokenize{#1}\relax\else(#1)\fi%
+  \par%
   \phantomsection
   \addcontentsline{toc}{section}{\chinese{mypart}、#2}
   }{
-  \IfFileExists{\jobname.dat}{
-    \edtlgetrowforvalue{\jobname}{1}{\themypart}
-    \dtlupdateentryincurrentrow{mypart}{\themypart}
-    \dtlupdateentryincurrentrow{problem}{\theproblem}
-    \dtlupdateentryincurrentrow{score}{\thescore}
-    }{
-    \DTLnewrow{\jobname}
+  \ifnum\thetotalblanks>0
+    \addtocounter{score}{\the\numexpr(\thetotalblanks-\theproblem)*\theprescore}
+  \fi
+  \ifnum\DTLrowcount{\jobname}>\numexpr\themypart
     \dtlexpandnewvalue
-    \DTLnewdbentry{\jobname}{mypart}{\themypart}
-    \DTLnewdbentry{\jobname}{problem}{\theproblem}
-    \DTLnewdbentry{\jobname}{score}{\thescore}
-  }
+    \edtlgetrowforvalue{\jobname}{1}{\themypart}
+    %this seems weird just because update is not expand the value
+    \dtlremoveentryincurrentrow{1}
+    \dtlappendentrytocurrentrow{mypart}{\themypart}
+    \dtlremoveentryincurrentrow{2}
+    \dtlappendentrytocurrentrow{problem}{\theproblem}
+    \dtlremoveentryincurrentrow{3}
+    \dtlappendentrytocurrentrow{score}{\thescore}
+    \dtlrecombine
+  \else
+    \ifnum\DTLrowcount{\jobname}=\numexpr\themypart
+      \dtlexpandnewvalue
+      \edtlgetrowforvalue{\jobname}{1}{\themypart}
+      %this seems weird just because update is not expand the value
+      \dtlremoveentryincurrentrow{1}
+      \dtlappendentrytocurrentrow{mypart}{\themypart}
+      \dtlremoveentryincurrentrow{2}
+      \dtlappendentrytocurrentrow{problem}{\theproblem}
+      \dtlremoveentryincurrentrow{3}
+      \dtlappendentrytocurrentrow{score}{\thescore}
+      \dtlrecombine
+    \else
+      \DTLnewrow{\jobname}
+      \dtlexpandnewvalue
+      \DTLnewdbentry{\jobname}{mypart}{\themypart}
+      \DTLnewdbentry{\jobname}{problem}{\theproblem}
+      \DTLnewdbentry{\jobname}{score}{\thescore}
+    \fi
+    \fi
   \setcounter{prescore}{0}
 \par}
-\newcommand{\centertext}{\leavevmode\xleaders\hb@xt@.25em{\hss - \hss }\hfill\kern\z@}
+\newcommand{\centertext}{%
+  \leavevmode\xleaders\hb@xt@.25em{\hss - \hss }\hfill\kern\z@%
+}
 \newcommand{\makedata}[1]{
   \noindent\centertext~{\heiti\zihao{4}附录\quad#1~\centertext}\par
   \smallskip\ignorespaces\noindent
@@ -883,7 +984,6 @@ and the derived files           mathexam.ins,
   \noindent\arabic{problem}.\,\ignorespaces
   \ifnum#1>0($#1'$)\addtocounter{score}{#1}\fi
   }{
-  %\addtocounter{score}{#1}
   \addtocounter{score}{\theprescore}
   \par
 }
@@ -894,16 +994,29 @@ and the derived files           mathexam.ins,
 \newcommand{\cdotfill}{%
   \leavevmode\xleaders\hbox to 0.5em{\hss$\cdot$\hss}\hfill\kern0pt\relax
 }
-\newcommand{\true}{\unskip\nobreak\cdotfill(\makebox[1.5em]{\answer{$\checkmark$}})}
-\newcommand{\false}{\unskip\nobreak\cdotfill(\makebox[1.5em]{\answer{\sffamily x}})}
+\newcommand{\true}{%
+  \unskip\nobreak\cdotfill(\makebox[1.5em]{\answer{$\checkmark$}})%
+}%
+\newcommand{\false}{%
+  \unskip\nobreak\cdotfill(\makebox[1.5em]{\answer{\sffamily x}})%
+}%
 %% 填空题
-\newcommand{\ulinefill}[1]{\xleaders\hbox{\uline{\vphantom{#1}\kern1pt}}\hfill\kern0pt}
-\newcommand{\fillin}[2][1em]{\uline{\hspace{#1}\answer{#2}\hspace{#1}}}
+\newcommand{\ulinefill}[1]{%
+  \xleaders\hbox{\uline{\vphantom{#1}\kern1pt}}\hfill\kern0pt%
+}
+\newcommand{\fillin}[2][1em]{%
+  \stepcounter{totalblanks}
+  \uline{\hspace{#1}\answer{#2}\hspace{#1}}
+}
 \newcommand{\fillout}[1]{%
+  \stepcounter{totalblanks}
   \allowbreak\hbox{}\nobreak\ulinefill{#1}\uline{\answer{#1}}\ulinefill{#1}
 }
 %% 选择题
-\newcommand{\pickout}[1]{\unskip\nobreak\cdotfill(\makebox[1.5em]{\answer{#1}})}
+\newcommand{\pickout}[1]{%
+  %\addtocounter{score}{\theprescore}
+  \unskip\nobreak\cdotfill(\makebox[1.5em]{\answer{#1}})
+}
 \newlength{\my@item@len}
 \newcommand\my@item@temp{%
   \unskip\cr\stepcounter{choice}(\Alph{choice})%
@@ -939,22 +1052,6 @@ and the derived files           mathexam.ins,
 }{}
 
 %% \score 评分
-%\PassOptionsToPackage{tbtags}{amsmath}
-%\RequirePackage{amsmath}
-%
-%\newcommand{\myscore}[1]{\textcolor{blue}{#1\kern0.2em 分}}
-%
-%\newcommand{\scoretext}[1]{\cdotfill\myscore{#1}\par\noindent\ignorespaces}
-%\newcommand{\scoreeqno}[1]{\eqno{\cdots\cdots\text{\myscore{#1}}}}
-%\newcommand{\scoretag}[1]{\tag*{$\cdots\cdots$\myscore{#1}}}
-%
-%\newrobustcmd{\score}[1]{%
-%  \ifbool{mmode}{%
-%      \ifdefstrequal{\tag}{\dft@tag}{\scoreeqno{#1}}{\scoretag{#1}}%
-%        }{%
-%        \scoretext{#1}%
-%      }%
-%    }
 \newcommand{\score}[1]{%
   \ifmmode%
     \tag*{$\cdots\cdots$(#1\, 分)}
@@ -963,7 +1060,6 @@ and the derived files           mathexam.ins,
   \fi
 }
 
-%跳过答案对应高度的垂直空白
 \newlength\ansheight
 \newcounter{cnt}
 \newcommand{\ansskip}[1]{
@@ -974,11 +1070,6 @@ and the derived files           mathexam.ins,
     \stepcounter{cnt}
   }
 }
-%第一个可选参数: 答题的标题;
-%第二个可选参数: 答题在标准答案上增加的高度;
-%\begin{solution}[4em][解]
-% 解题答案
-%\end{solution}
 \newbox{\ansbox}
 \NewDocumentEnvironment{solution}{O{0em} O{\solutionname} +b}
 { \savebox{\ansbox}{
@@ -1067,7 +1158,8 @@ and the derived files           mathexam.ins,
   \begin{tikzpicture}[%
     remember picture,overlay,font=\sffamily\fontsize{100pt}{100pt}\selectfont%
     ]%
-    \node[text=lightgray!20] at (current page text area.center) {草\quad 稿\quad 纸};
+    \node[text=lightgray!20, rotate=45] at (current page text area.center)%
+    {草\quad 稿\quad 纸};
 \end{tikzpicture}}
 \ifsidebyside
   \preto{\@enddocumenthook}{%
@@ -1083,7 +1175,7 @@ and the derived files           mathexam.ins,
     \preto{\@enddocumenthook}{
       %insert an enpty page for odd total page
       \clearpage
-      \thinspace 
+      \thinspace
     }
   \fi
   \pgfpagesuselayout{2 on 1}[a3paper, border shrink=5mm,landscape]
@@ -1095,8 +1187,20 @@ and the derived files           mathexam.ins,
     {\string\gdef\string\mathexam@totalpages{\arabic{page}}}%
   \fi
   \DTLsavedb{\jobname}{\jobname.dat}
+  \DTLsavetexdb{\jobname}{\jobname.dbtex}
   \IfFileExists{\jobname.dat}{}{\DTLdisplaydb{\jobname}}
 }
+\ifmathexam@showans{%
+    \ifnum\shellescape=1
+      \immediate\write18{cp \jobname.pdf \jobname-参考答案.pdf}
+    \else
+      \message{^^J Warning: **********************^^J}
+      \message{^^J 请使用`xelatex -shell-escape \jobname.tex`%
+      编译来自动重命名^^J}
+      \message{^^J *******************************^^J}
+    \fi
+  }
+\fi
 %</package>
 %<*maintex>
 \documentclass[cs4size]{article}
@@ -1151,7 +1255,8 @@ and the derived files           mathexam.ins,
     \end{abcd}
   \end{problem}
   \begin{problem}
-    圆盘$D:x^2+y^2\leq2^2$上的二重积分$\iint_D\sqrt{4-x^2-y^2}dxdy$等于\pickout{C}
+    圆盘$D:x^2+y^2\leq2^2$上的二重积分$\iint_D\sqrt{4-x^2-y^2}dxdy$等于%
+    \pickout{C}
     \begin{abcd}
     \item $16\pi$;
     \item $8\pi$;
@@ -1161,8 +1266,10 @@ and the derived files           mathexam.ins,
   \end{problem}
   \begin{problem}
     椭球
-    $\Omega=\left\{ (x,y,z): \frac{x^2}{a^2}+\frac{y^2}{b^2}+\frac{z^2}{c^2}\leq1 \right\}$
-    上的三重积分$\iiint_\Omega\sqrt{1- \frac{x^2}{a^2}-\frac{y^2}{b^2}-\frac{z^2}{c^2}}dV$等于
+    $\Omega=\left\{ (x,y,z): \frac{x^2}{a^2}
+    +\frac{y^2}{b^2}+\frac{z^2}{c^2}\leq1 \right\}$
+    上的三重积分$\iiint_\Omega\sqrt{1- \frac{x^2}{a^2}
+    -\frac{y^2}{b^2}-\frac{z^2}{c^2}}dV$等于
     \pickout{B}
     \begin{abcd}
     \item $\frac{\pi^2}{4}$;
@@ -1203,7 +1310,8 @@ and the derived files           mathexam.ins,
     则全微分$dz|_{(1,1)}=$\fillin{$dx+2dy$}.
   \end{problem} 
   \begin{problem}
-    求椭圆抛物面$z=2x^2+3y^2-1$与平面$4x+6y+z-1=0$平行的切平面方程\fillin{4x+6y+z+6=0}.
+    求椭圆抛物面$z=2x^2+3y^2-1$与平面$4x+6y+z-1=0$平行的切平面方程
+    \fillin{4x+6y+z+6=0}.
   \end{problem} 
 \end{makepart}
 \begin{makepart}{概念题}[5]
@@ -1211,7 +1319,8 @@ and the derived files           mathexam.ins,
   \begin{problem}
     假设二元函数$f(x,y)$在开区域
     $\Omega \subset \mathbb{R}^2$上有定义且在$P_0\in\Omega$处可微.
-    试用$\epsilon$-$\delta$语言严格叙述: 在$P_0(0,0)\in \Omega$处$f$的全微分为$df(P_0)$.
+    试用$\epsilon$-$\delta$语言严格叙述: 在$P_0(0,0)\in \Omega$处$f$%
+    的全微分为$df(P_0)$.
     \begin{solution}[6em]
       即叙述存在常数$a,b\in \mathbb{R}$, 使得$df(P_0)=adx+bdy$. \score{1}\\
       用$\epsilon$-$\delta$语言叙述如下:
@@ -1220,7 +1329,8 @@ and the derived files           mathexam.ins,
       即$0<\sqrt{x^2+y^2}\leq \delta$,\score{3}\\
       都存在常数$a,b\in \mathbb{R}$, 使得:
       \[
-        \left\lvert \frac{f(x,y)-f(0,0)-ax-by}{\sqrt{x^2+y^2}} \right\rvert\leq\epsilon.
+        \left\lvert \frac{f(x,y)-f(0,0)-ax-by}{\sqrt{x^2+y^2}} \right\rvert
+	\leq\epsilon.
         \score{2}
       \]
     \end{solution}
@@ -1268,7 +1378,8 @@ and the derived files           mathexam.ins,
     的外侧, 计算积分$I=\iint_\Sigma zdxdy$.
     \begin{solution}
       为了参数化$\Sigma$我们将其分为上下两部分, 分别记作$\Sigma_+$, $\Sigma_-$.
-      它们在$Oxy$平面的投影都是一个椭圆$D_{xy}:\frac{x^2}{a^2}+\frac{y^2}{b^2}\leq 1$.
+      它们在$Oxy$平面的投影都是一个椭圆$D_{xy}:\frac{x^2}{a^2}+\frac{y^2}{b^2}
+      \leq 1$.
       此时, 上、下半椭圆可分别参数化为
       \[
         \Sigma_\pm:\left(x,y,z^\pm=\pm c\sqrt{1-\frac{x^2}{a^2}
@@ -1287,7 +1398,8 @@ and the derived files           mathexam.ins,
          =2abc\iint_{u^2+v^2\leq1}\sqrt{1-u^2-v^2}dudv\score{2}\\
          &=2abc\int_0^{2\pi}d\theta\int_0^1 r\sqrt{1-r^2}dr
          =2\pi abc\int_0^1\sqrt{1-t}dt\score{2}\\
-         &=2\pi abc\left. \left( -\frac{2}{3}(1-t)^{3/2} \right) \right\rvert_{t=0}^1
+         &=2\pi abc
+	 \left. \left( -\frac{2}{3}(1-t)^{3/2} \right) \right\rvert_{t=0}^1
          =\frac{4\pi abc}{3}.\score{2}
       \end{align*}
     \end{solution}
@@ -1331,9 +1443,11 @@ and the derived files           mathexam.ins,
       \]
       进而由
       \[
-        \sum_{i=1}^{n}\theta_i=2\pi\implies \theta_1=\theta_2=\cdots=\theta_n=2\pi/n.
+        \sum_{i=1}^{n}\theta_i=2\pi\implies \theta_1=\theta_2
+	=\cdots=\theta_n=2\pi/n.
       \]
-      这即表明在驻点处, 此时$n$边形为正$n$边线. 由实际问题易知在驻点处取得极大值.
+      这即表明在驻点处, 此时$n$边形为正$n$边线. 
+      由实际问题易知在驻点处取得极大值.
       这就完成了证明.\score{1}
       \begin{rmk}
         解驻点方程时一定要写清楚$\theta_i$的范围, 否则扣一分.
@@ -1350,9 +1464,11 @@ and the derived files           mathexam.ins,
     将拽物线沿着$z$轴旋转一周得到的旋转曲面称为\emph{拽物面}(tractricoid).
     将拽物面沿着$Oxy$-平面反射延拓得到的整个曲面称为\emph{伪球面}(pseudosphere),
     它是三维空间中具有常数高斯曲率$-1$的不完备非紧超曲面. 事实上,
-    著名数学家Hilbert在1901年证明了不存在浸入到三维欧式空间且高斯曲率为负常数的正则完备曲面.
+    著名数学家Hilbert在1901年证明了不存在浸入到三维欧式空间且高斯曲率为负常数%
+    的正则完备曲面.
     关于伪球面的表面积与体积早在1693年由克里斯蒂安·惠更斯求出.
-    他在1678年完成的《光论》(Trait\'e de la Lumi\`ere)中提出了关于波传播的著名的惠更斯原理.
+    他在1678年完成的《光论》(Trait\'e de la Lumi\`ere)
+    中提出了关于波传播的著名的惠更斯原理.
     \begin{enumerate}
       \item 请首先证明拽物线$z=z(x)$满足常微分方程
         \begin{equation}\label{eq:tractrix}
@@ -1404,7 +1520,8 @@ and the derived files           mathexam.ins,
       %  z0=10u*right;
       %  t=4.5;
       %  z1=point t of pat;
-      %  z2=(origin--20u*up) intersectionpoint (z1--(z1+10u*(direction t of pat)));
+      %  z2=(origin--20u*up) intersectionpoint%
+      %  (z1--(z1+10u*(direction t of pat)));
 
       %  draw pat withcolor blue;
       %  draw z1--z2 withcolor red;
@@ -1425,7 +1542,8 @@ and the derived files           mathexam.ins,
     \end{minipage}
     \begin{solution}
       \begin{enumerate}
-        \item 由图易知, 细线始终和$A$的轨迹相切. 假设$A=(x,z)$, 则$A$处的斜率直接计算得
+        \item 由图易知, 细线始终和$A$的轨迹相切. 假设$A=(x,z)$,
+	  则$A$处的斜率直接计算得
           \[
             z'(x)=-\frac{\sqrt{1-x^2}}{x},\quad 0<x\leq1.
           \]
@@ -1448,7 +1566,8 @@ and the derived files           mathexam.ins,
           又由于$x(0)=1, z(0)=0$确实在拽物线上, 故由常微分方程的存在唯一性知
           \eqref{eq:para-tractrix}就是拽物线的参数化. \score(2)
 
-          最后, 由拽物面是由拽物线$z=z(x)$绕着$z$轴旋转一周得到的. 故其参数方程为
+          最后, 由拽物面是由拽物线$z=z(x)$绕着$z$轴旋转一周得到的. 
+	  故其参数方程为
           \[
             \begin{cases}
               x=\sech t\cos\theta,\\
@@ -1481,7 +1600,8 @@ and the derived files           mathexam.ins,
 
           \textbf{法二}: 如果直接使用(a)中得到的参数方程
           \[
-            X(t,\theta)=\left( \sech t\cos\theta,\sech t\sin\theta,t-\tanh t \right),
+            X(t,\theta)
+	    =\left( \sech t\cos\theta,\sech t\sin\theta,t-\tanh t \right),
             \score{2}
           \]
           则容易算出
@@ -1503,7 +1623,8 @@ and the derived files           mathexam.ins,
           \]
           因此,
           \[
-            J=\frac{\partial(x,y)}{\partial(t,\theta)}=-\sech^2 t\tanh t.\score{2}
+            J=\frac{\partial(x,y)}{\partial(t,\theta)}
+	    =-\sech^2 t\tanh t.\score{2}
           \]
           故体积为
           \begin{align*}
@@ -1515,12 +1636,18 @@ and the derived files           mathexam.ins,
             &=\int_0^1 (u\arctanh u-u^2) du,
             \quad(u=\tanh t, du=\sech^2 tdt)\\
             &=-\frac{1}{3}+\frac{1}{2}\int_0^1\arctanh u du^2\\
-            &=-\frac{1}{3}+\frac{1}{2}\left( \left. u^2\arctanh u \right\rvert_{u=0}^1
-            -\int_0^1 \frac{u^2}{1-u^2}du \right),\quad (\arctanh'u=\frac{1}{1-u^2})\\
-            &=-\frac{1}{3}+\frac{1}{2}\left( \left. u^2\arctanh u \right\rvert_{u=0}^1
-            +1-\frac{1}{2}\int_0^1\left( \frac{1}{1-u}+\frac{1}{1+u} \right)du \right)\\
-            &=\frac{1}{6}+\frac{1}{2}\left. \left( u^2\arctanh u
-            -\frac{1}{2}\left( -\ln(1-u)+\ln(1+u) \right) \right) \right\rvert_{u=0}^1\\
+            &=-\frac{1}{3}+\frac{1}{2}
+	    \left( \left. u^2\arctanh u \right\rvert_{u=0}^1
+            -\int_0^1 \frac{u^2}{1-u^2}du \right),\quad 
+	    (\arctanh'u=\frac{1}{1-u^2})\\
+            &=-\frac{1}{3}+\frac{1}{2}
+	    \left( \left. u^2\arctanh u \right\rvert_{u=0}^1
+	      +1-\frac{1}{2}\int_0^1\left( \frac{1}{1-u}+\frac{1}{1+u} \right)
+	    du \right)\\
+            &=\frac{1}{6}+\frac{1}{2}
+	    \left. \left( u^2\arctanh u
+	      -\frac{1}{2}\left( -\ln(1-u)+\ln(1+u) \right) \right) 
+	    \right\rvert_{u=0}^1\\
             &=\frac{1}{6}+\frac{1}{2}\lim_{u\to1^-}\left( u^2\arctanh u
             -\sqrt{\frac{1-u}{1+u}} \right).\score{3}
           \end{align*}
