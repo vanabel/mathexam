@@ -1197,10 +1197,10 @@ and the derived files           mathexam.ins,
 \newcommand{\answertable}[3][1em]{%
   \noindent 答题须知：本部分答案必须写在如下表格中，否则不给分．
   若为填空题, 则编号是按空的顺序.\par
-  \noindent\begin{tabularx}{\linewidth}{|c|*{#3}{P|}}
+  \noindent\begin{tabu}to \linewidth{|X[c]|*{#3}{X[c]|}}
     \hline
     \answer@lines{#1}{#2}{#3}
-  \end{tabularx}%
+  \end{tabu}%
   \par\vspace{0.8em}%
 }
 
