@@ -150,7 +150,7 @@ and the derived files           mathexam.ins,
 %<package>\NeedsTeXFormat{LaTeX2e}[2005/12/01]
 %<package>\ProvidesPackage{mathexam}
 %<*package>
-[2020/06/24 v.2.1.0 一个数学类考试宏包]
+[2020/07/03 v.2.2.0 一个数学类考试宏包]
 %</package>
 %
 %<*driver>
@@ -284,8 +284,8 @@ and the derived files           mathexam.ins,
 % \DoNotIndex{\thescore,\thetotalblanks,\tobecalculate,\totalnumpages,\totalprobinpart}
 % \DoNotIndex{\totalproblems,\totalscoreinpart,\totalscores,\totalstu,\totaltime,\uline}
 % \DoNotIndex{\unlessboolexpr,\unskip,\ulinefill,\vbox,\vphantom,\vspace,\whileboolexpr}
-% \DoNotIndex{\whiledo,\write,\xdef,\xleaders,\z@,\zihao}
-% \DoNotIndex{}
+% \DoNotIndex{\whiledo,\write,\xdef,\xleaders,\z@,\zihao,\DTLgetvalue,\tabucolX}
+% \DoNotIndex{\tabuphantomline,\tand,\tempscore,\thetemp}
 % \DoNotIndex{}
 % \expandafter\DoNotIndex\expandafter{\string\&}
 % \expandafter\DoNotIndex\expandafter{\string\{}
@@ -331,6 +331,7 @@ and the derived files           mathexam.ins,
 %\changes{v1.1.0}{2019/11/07}{增加测验宏包; 改进ans环境}
 %\changes{v2.0.0}{2020/06/21}{SWU 版本}
 %\changes{v2.1.0}{2020/06/24}{自动更新数据库}
+%\changes{v2.2.0}{2020/07/03}{自动根据大题总数来生成试卷头的计分表格}
 %
 %\section{简明使用教程}
 % 基本上, 使用本宏包|mathexam|, 你只需要下载|mathexam.sty|并将其放到你的工作目录, 
@@ -583,15 +584,14 @@ and the derived files           mathexam.ins,
 %<*package>
 \NeedsTeXFormat{LaTeX2e}[2005/12/01]
 \ProvidesPackage{mathexam}
-[2020/06/21 v.2.0.0 一个数学类考试宏包]
+[2020/07/03 v.2.2.0 一个数学类考试宏包]
 \NeedsTeXFormat{LaTeX2e}[1996/06/01]
-\ProvidesPackage{mathexam}[2020/06/24 A package for create math examination 
-v2.1.0]
+\ProvidesPackage{mathexam}[2020/07/03 一个数学类考试宏包 v2.2.0]
 \RequirePackage{mathtools, amssymb, amsthm}
 \RequirePackage[contents={}]{background}
 \RequirePackage{ctex}
 \RequirePackage{geometry}
-\RequirePackage{tabularx}
+\RequirePackage{tabu}
 \RequirePackage{refcount, fancyhdr}
 
 \RequirePackage{calc}
@@ -685,6 +685,19 @@ v2.1.0]
 }
 \newcommand{\myheader}{\zihao{5}\mathexam@value@university 课程考核}
 \newlength\headertextlen
+\newcounter{temp}
+\setcounter{temp}{0}
+\def\tand{&}
+\ifnum0\DTLcolumncount{\jobname}>2%
+  \DTLsumforkeys{\jobname}{problem}{\totalproblems}%
+\else%
+  \let\totalproblems\tobecalculate%
+\fi%
+\ifnum0\DTLcolumncount{\jobname}>2%
+  \DTLsumforkeys{\jobname}{score}{\totalscores}%
+\else%
+  \let\totalscores\tobecalculate%
+\fi%
 \newcommand{\makehead}{%
   \pagestyle{plain} %plain
   \settowidth{\headertextlen}{\myheader}
@@ -785,9 +798,7 @@ v2.1.0]
       }\\[2em]
     \end{center}
     \zihao{-4}
-    \newcolumntype{P}{>{\centering\arraybackslash}X}
-    \newcolumntype{L}{>{\flushleft\arraybackslash}X}
-    \begin{tabularx}{\linewidth}{|*{12}{P|}}
+    \begin{tabu}to \linewidth{|*{12}{X[c]|}}
       \hline
       \multicolumn{8}{|c}{
         20\mathexam@lasttwoofyear{-1} 至 20\mathexam@lasttwoofyear{0} 学年
@@ -809,16 +820,64 @@ v2.1.0]
       年级                                                         &
       \multicolumn{2}{c|}{\mathexam@value@grade 级}                \\
       \hline
-      题号                                                         &
-      一 & 二 & 三 & 四 & 五 & 六 & 七 & 八 & 九 & 十 & 合计 \\
+      \ifnum\numexpr\DTLcolumncount{\jobname}\relax>2
+      \multicolumn{1}{|r}{题号}&
+      \multicolumn{11}{l|}{\begin{tabu}to %
+	  \dimexpr\textwidth-\tabucolX-4\tabcolsep-3\arrayrulewidth\relax%
+	  {*{\numexpr\DTLrowcount{\jobname}+1\relax}{|X[c]}}
+	  \whiledo{\thetemp<\DTLrowcount{\jobname}}{%
+	  \stepcounter{temp}%
+	  \chinese{temp} \tand
+	}
+	   合计\\
+  \end{tabu}}\\
       \hline
-      得分                                                         &
-         &    &    &    &    &    &    &    &    &    &      \\
+      \multicolumn{1}{|r}{分值}&
+      \multicolumn{11}{l|}{\begin{tabu}to %
+	  \dimexpr\textwidth-\tabucolX-4\tabcolsep-3\arrayrulewidth\relax%
+	  {*{\numexpr\DTLrowcount{\jobname}+1\relax}{|X[c]}}
+	  \setcounter{temp}{0}
+	  \whiledo{\thetemp<\DTLrowcount{\jobname}}{%
+	  \stepcounter{temp}%
+	  \DTLgetvalue{\tempscore}{\jobname}{\thetemp}{3}\tempscore \tand
+	}\totalscores\\
+      \end{tabu}}\\
       \hline
-      签名                                                         &
-         &    &    &    &    &    &    &    &    &    &      \\
+      \multicolumn{1}{|r}{得分}&
+      \multicolumn{11}{l|}{\begin{tabu}to %
+	  \dimexpr\textwidth-\tabucolX-4\tabcolsep-3\arrayrulewidth\relax%
+	  {*{\numexpr\DTLrowcount{\jobname}+1\relax}{|X[c]}}
+	  \setcounter{temp}{0}
+	  \whiledo{\thetemp<\DTLrowcount{\jobname}}{%
+	  \stepcounter{temp}%
+	  \tand
+	}\\
+      \end{tabu}}\\
       \hline
-    \end{tabularx}
+      \multicolumn{1}{|r}{签名}&
+      \multicolumn{11}{l|}{\begin{tabu}to %
+	  \dimexpr\textwidth-\tabucolX-4\tabcolsep-3\arrayrulewidth\relax%
+	  {*{\numexpr\DTLrowcount{\jobname}+1\relax}{|X[c]}}
+	  \setcounter{temp}{0}
+	  \whiledo{\thetemp<\DTLrowcount{\jobname}}{%
+	  \stepcounter{temp}%
+	  \tand
+	}\\
+      \end{tabu}}\\
+    \hline
+    \tabuphantomline
+    \else
+    题号&
+    一  & 二 & 三 & 四 & 五 & 六 & 七 & 八 & 九 & 十 & 合计 \\
+    \hline
+    得分&
+	&    &    &    &    &    &    &    &    &    &      \\
+    \hline
+    签名&
+	&    &    &    &    &    &    &    &    &    &      \\
+    \hline
+    \fi
+    \end{tabu}
 
     \noindent \zihao{5}阅卷须知: 阅卷用红色墨水笔书写，%
     得分用阿拉伯数字写在每小题题号前，%
@@ -837,16 +896,6 @@ v2.1.0]
 	违者将受到严肃处理。}
       }
     \end{center}
-    \ifnum0\DTLcolumncount{\jobname}>2%
-      \DTLsumforkeys{\jobname}{problem}{\totalproblems}%
-    \else%
-      \let\totalproblems\tobecalculate%
-    \fi%
-    \ifnum0\DTLcolumncount{\jobname}>2%
-      \DTLsumforkeys{\jobname}{score}{\totalscores}%
-    \else%
-      \let\totalscores\tobecalculate%
-    \fi%
     \noindent\zihao{-4}本试卷分为%
     \ifnum0\DTLcolumncount{\jobname}>2%
       \textbf{\DTLrowcount{\jobname}}%
@@ -1538,7 +1587,7 @@ v2.1.0]
       %  label.rt(btex $z$ etex, 20u*up);
       %  dotlabel.llft(btex $O$ etex, origin);
       %\end{mpost}
-      \hfill\includegraphics[scale=.8]{tractrix}\\
+      \IfFileExists{tractrix.pdf}{\hfill\includegraphics[scale=.8]{tractrix}\\}{}
       %\hfill\captionof{figure}{拽物线}\label{fig:tractrix}
     \end{minipage}
     \begin{solution}

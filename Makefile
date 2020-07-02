@@ -6,7 +6,8 @@
 .PHONY : main pkg maintex mainanstex doc clean all FORCE_MAKE
 
 NAME = mathexam
-VER= v2.1.0
+VER= v2.2.0
+ZIPNAME= $(NAME)-$(VER).zip
 UTREE = $(shell kpsewhich --var-value TEXMFHOME)
 LOCAL = $(shell kpsewhich --var-value TEXMFLOCAL)
 # make without parameter will use make main
@@ -34,7 +35,7 @@ $(NAME).sty: $(NAME).dtx
 $(NAME).pdf : $(NAME).dtx FORCE_MAKE
 	latexmk -xelatex $<
 
-maintex : $(NAME)-main.tex FORCE_MAKE
+maintex :$(NAME)-main.tex FORCE_MAKE
 	latexmk -xelatex -shell-escape -use-make $<
 
 mainanstex : $(NAME)-main-answer.tex FORCE_MAKE
@@ -43,23 +44,25 @@ mainanstex : $(NAME)-main-answer.tex FORCE_MAKE
 clean :
 	latexmk -c
 	latexmk -c $(NAME).dtx
+	rm -f README.txt
 	rm -f $(NAME)-main.{nav,snm,vrb,xdv,dat} \
 	  $(NAME)-main-answer.{nav,snm,vrb,xdv,dat}
 
 distclean : 
 	latexmk -CA
 	latexmk -CA $(NAME).dtx
-	rm $(NAME)-main.* $(NAME)-main-answer.* $(NAME).sty $(NAME).ins\
-	  main.tex *.pdf *.vim
+	rm -f README.txt
+	rm -rf $(NAME)-main.* $(NAME)-main-answer.* $(NAME).sty $(NAME).ins\
+	 main.tex *.pdf *.vim
 	
 
 zip : pkg doc main
 	mkdir -p $(NAME)-$(VER) 
-	cp -r $(NAME).{dtx,sty,pdf} \
+	cp -rf $(NAME).{dtx,sty,pdf} \
 	  README.md $(NAME)-main.{tex,pdf} \
 	  $(NAME)-main-answer.{tex,pdf} \
-	  .latexmkrc Makefile $(NAME)-$(VER)
-	cp -r tractrix.pdf $(NAME)-$(VER)/
-	rm *.zip
+	  main.tex .latexmkrc Makefile $(NAME)-$(VER)
+	cp -rf tractrix.pdf $(NAME)-$(VER)/
+	rm -rf *.zip
 	zip -r $(NAME)-$(VER).zip $(NAME)-$(VER)
-	rm -r $(NAME)-$(VER)
+	rm -rf $(NAME)-$(VER)
