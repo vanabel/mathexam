@@ -53,7 +53,7 @@ distclean :
 	latexmk -CA $(NAME).dtx
 	rm -f README.txt
 	rm -rf $(NAME)-main.* $(NAME)-main-answer.* $(NAME).sty $(NAME).ins\
-	 main.tex *.pdf *.vim
+	 main.tex *.vim
 	
 
 zip : pkg doc main

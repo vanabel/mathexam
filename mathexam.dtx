@@ -291,16 +291,16 @@ and the derived files           mathexam.ins,
 % \expandafter\DoNotIndex\expandafter{\string\{}
 % \expandafter\DoNotIndex\expandafter{\string\}}
 %
-%\def\DescribeOption{\leavevmode\@bsphack
+%\def\DescribeOption{\leavevmode
 %  \begingroup\MakePrivateLetters\Describe@Option}
-%\def\Describe@Option#1{\endgroup
-%  ^^A\marginpar{\raggedleft\PrintDescribeOption{#1}}%
-%  \SpecialOptionIndex{#1}\@esphack\ignorespaces}
+%\def\Describe@Option#1{\endgroup%
+%  \marginpar{\raggedleft\PrintDescribeOption{#1}}%
+%  \SpecialOptionIndex{#1}\ignorespaces}
 %\def\PrintDescribeOption#1{\strut\MacroFont #1}
-%\def\SpecialOptionIndex#1{\@bsphack
-%  ^^A\index{\quotechar/#1% sort options as `Symbols'
-%  ^^A  \actualchar{\protect\ttfamily#1}\encapchar usage}%
-%  \CatIndex{#1}{option}\@esphack}
+%\def\SpecialOptionIndex#1{%
+%  \index{\quotechar/#1% sort options as `Symbols'
+%  \actualchar{\protect\ttfamily#1}\encapchar usage}%
+%  \CatIndex{#1}{option}}
 %\def\CatIndex#1#2{\index{#1\actualchar{\protect\ttfamily #1} (#2)\encapchar hyperpage}}
 %
 %\title{^^A
