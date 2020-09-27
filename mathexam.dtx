@@ -590,6 +590,7 @@ and the derived files           mathexam.ins,
 \RequirePackage{mathtools, amssymb, amsthm}
 \RequirePackage[contents={}]{background}
 \RequirePackage{ctex}
+\RequirePackage{bookmark}
 \RequirePackage{geometry}
 \RequirePackage{tabu}
 \RequirePackage{refcount, fancyhdr}
@@ -601,6 +602,7 @@ and the derived files           mathexam.ins,
 \RequirePackage{etoolbox,xparse,  multido, ifthen}
 \RequirePackage{zhnumber}
 \RequirePackage{datatool}
+\RequirePackage{ifplatform}
 \IfFileExists{\jobname.dat}{
   \DTLloaddb{\jobname}{\jobname.dat}
   }{
@@ -1242,7 +1244,11 @@ and the derived files           mathexam.ins,
 }
 \ifmathexam@showans{%
     \ifnum\shellescape=1
-      \immediate\write18{cp \jobname.pdf \jobname-参考答案.pdf}
+      \ifwindows
+      \immediate\write18{copy \jobname.pdf \jobname-Answer.pdf}
+      \else
+      \immediate\write18{cp \jobname.pdf \jobname-Answer.pdf}
+      \fi
     \else
       \message{^^J Warning: **********************^^J}
       \message{^^J 请使用`xelatex -shell-escape \jobname.tex`%
@@ -1255,14 +1261,24 @@ and the derived files           mathexam.ins,
 %<*maintex>
 \documentclass[cs4size]{article}
 \usepackage[a3paper]{mathexam} %showans
-\usepackage[colorlinks,linkcolor=cyan,ocgcolorlinks]{hyperref}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks,
+  linkcolor=cyan,
+  ocgcolorlinks
+}
 \usepackage{caption}
 \input{main}
 %</maintex>
 %<*mainanstex>
 \documentclass[cs4size]{article}
 \usepackage[showans]{mathexam} %showans
-\usepackage[colorlinks,linkcolor=cyan,ocgcolorlinks]{hyperref}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks,
+  linkcolor=cyan,
+  ocgcolorlinks
+}
 \usepackage{caption}
 \input{main}
 %</mainanstex>
