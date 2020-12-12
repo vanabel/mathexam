@@ -150,7 +150,7 @@ and the derived files           mathexam.ins,
 %<package>\NeedsTeXFormat{LaTeX2e}[2005/12/01]
 %<package>\ProvidesPackage{mathexam}
 %<*package>
-[2020/07/03 v.2.2.0 一个数学类考试宏包]
+[2020/12/12 v.2.3.0 一个数学类考试宏包]
 %</package>
 %
 %<*driver>
@@ -286,6 +286,10 @@ and the derived files           mathexam.ins,
 % \DoNotIndex{\unlessboolexpr,\unskip,\ulinefill,\vbox,\vphantom,\vspace,\whileboolexpr}
 % \DoNotIndex{\whiledo,\write,\xdef,\xleaders,\z@,\zihao,\DTLgetvalue,\tabucolX}
 % \DoNotIndex{\tabuphantomline,\tand,\tempscore,\thetemp}
+% \DoNotIndex{\mathexam@sidebysidefalse,\mathexam@sidebysidetrue,\mathexam@nospacetrue}
+% \DoNotIndex{\mathexam@nospacefalse,\arrayrulewidth,\ifmathexam@caogaozhi}
+% \DoNotIndex{\ifmathexam@sidebyside,\ifmathexam@nospace,\mathexam@caogaozhifalse}
+% \DoNotIndex{\mathexam@caogaozhitrue}
 % \DoNotIndex{}
 % \expandafter\DoNotIndex\expandafter{\string\&}
 % \expandafter\DoNotIndex\expandafter{\string\{}
@@ -332,6 +336,8 @@ and the derived files           mathexam.ins,
 %\changes{v2.0.0}{2020/06/21}{SWU 版本}
 %\changes{v2.1.0}{2020/06/24}{自动更新数据库}
 %\changes{v2.2.0}{2020/07/03}{自动根据大题总数来生成试卷头的计分表格}
+%\changes{v2.3.0}{2020/12/12}{将草稿纸设置为可选项}
+%\changes{v2.3.0}{2020/12/12}{设置nospace选项: 解答题不留空}
 %
 %\section{简明使用教程}
 % 基本上, 使用本宏包|mathexam|, 你只需要下载|mathexam.sty|并将其放到你的工作目录, 
@@ -352,11 +358,17 @@ and the derived files           mathexam.ins,
 % 此外, 该选项还会自动生成侧边学生填写信息以及在最后一页添加草稿纸.
 %
 %\DescribeOption{fixlast}
-% |fixlast| 该选项只在|a3paper|选项启用时才有作用, 这是为了修复试卷总页码为奇数页时, 
-%在A3纸上显示时的格式错误.
+%为了修复试卷总页码为奇数页时, 在A3纸上显示时的格式错误.
 %
-%例如:\\
-%|\documentclass[showans]{article}|则表示把|showans|选项传给|article|类. 
+%\DescribeOption{nospace}
+%是否忽略解答题答题区域的空白, 缺省留空白
+%
+%\DescribeOption{caogaozhi}
+%是否在试卷末尾打印草稿纸, 缺省不打印
+%
+%例如:
+%
+%|\documentclass[showans]{article}|则表示把|showans|选项传给|article|类.
 %
 %|\usepackage[showans]{mathexam}|将|showans|选项传递给|mathexam|宏包.
 %
@@ -610,13 +622,16 @@ and the derived files           mathexam.ins,
 }
 
 \newif\ifmathexam@showans\mathexam@showansfalse % 是否显示答案
-\newif\ifsidebyside \sidebysidefalse % 是否 A3 纸张
+%是否 A3 纸张
+\newif\ifmathexam@sidebyside\mathexam@sidebysidefalse
 \newif\ifmathexam@fixlast\mathexam@fixlastfalse % 是否修复末页
+\newif\ifmathexam@nospace\mathexam@nospacefalse%解答题不留空白
+\newif\ifmathexam@caogaozhi\mathexam@caogaozhifalse%输出草稿纸
 \DeclareOption{showans}{ \mathexam@showanstrue}
-\DeclareOption{fixlast}{
-  \mathexam@fixlasttrue
-}
-\DeclareOption{a3paper}{\sidebysidetrue}
+\DeclareOption{fixlast}{\mathexam@fixlasttrue}
+\DeclareOption{nospace}{\mathexam@nospacetrue}
+\DeclareOption{caogaozhi}{\mathexam@caogaozhitrue}
+\DeclareOption{a3paper}{\mathexam@sidebysidetrue}
 
 \ProcessOptions\relax
 
@@ -703,7 +718,7 @@ and the derived files           mathexam.ins,
 \newcommand{\makehead}{%
   \pagestyle{plain} %plain
   \settowidth{\headertextlen}{\myheader}
-  \ifsidebyside{
+  \ifmathexam@sidebyside
       \AddEverypageHook{%
         \ifthenelse{\isodd{\value{page}}}%
         {
@@ -733,11 +748,11 @@ and the derived files           mathexam.ins,
           \backgroundsetup{
             color=black,
             angle=90,
-            scale=1,
+            scale=1.01,
             opacity=1,
             position={-\myinner+\myleft,-\textheight/2},
-            vshift=8pt,
-            hshift=12.5pt,
+            vshift=5.5pt,
+            hshift=13pt,
             contents={
               \begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c}
                 \hline 学院            &
@@ -779,7 +794,7 @@ and the derived files           mathexam.ins,
           }
         }
         \BgMaterial
-  }}\fi
+  }\fi
   \ifthenelse{\value{page}=1}{
     %% The header
     \newgeometry{
@@ -911,7 +926,7 @@ and the derived files           mathexam.ins,
   }\ignorespace}%
 
 \fancypagestyle{plain}{
-  \ifsidebyside
+  \ifmathexam@sidebyside
     \renewcommand{\headrulewidth}{0pt}
     \renewcommand{\footrulewidth}{0pt}
   \else
@@ -932,19 +947,21 @@ and the derived files           mathexam.ins,
     \ifthenelse{\value{page}=1}{%\isodd{\value{page}}
       \zihao{-5}
       \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}clclclc}
+	\ifmathexam@sidebyside\\[2em]\fi
         命题教师:                             &
         \mathexam@value@examiner              &
         教研室或系负责人:                     &
         \mathexam@value@director              &
         主管院长:                             &
         \mathexam@value@dean                  &
-        \the\year 年\the\month 月\the\day 日 \\
+	\the\year 年\the\month 月\the\day 日 \\[2em]
         \multicolumn{7}{c}{
           \mathexam@value@AorB 卷\quad%
           第 \thepage 页, 共 \totalnumpages 页%
         }
       \end{tabular*}
       }{
+      \ifmathexam@sidebyside\vspace*{2em}\fi
       第 \thepage 页, 共 \totalnumpages 页%
     }
   }
@@ -1111,7 +1128,7 @@ and the derived files           mathexam.ins,
     \cdotfill(#1\, 分)\par\noindent
   \fi
 }
-
+%解答题
 \newlength\ansheight
 \newcounter{cnt}
 \newcommand{\ansskip}[1]{
@@ -1130,8 +1147,12 @@ and the derived files           mathexam.ins,
   \ifmathexam@showans
     \par\noindent\textbf{#2}:~#3\qed\par
   \else
-    \addtolength{\ansheight}{#1}
-    \ansskip{\ansheight}
+    \ifmathexam@nospace
+      \setlength{\ansheight}{0em}
+    \else
+      \addtolength{\ansheight}{#1}
+    \fi
+  \ansskip{\ansheight}
   \fi
 }{\par}
 
@@ -1213,7 +1234,7 @@ and the derived files           mathexam.ins,
     \node[text=lightgray!20, rotate=45] at (current page text area.center)%
     {草\quad 稿\quad 纸};
 \end{tikzpicture}}
-\ifsidebyside
+\ifmathexam@caogaozhi
   \preto{\@enddocumenthook}{%
     \clearpage
     \pagestyle{empty}
@@ -1222,6 +1243,9 @@ and the derived files           mathexam.ins,
     \caogaozhi
     \addtocounter{page}{-2}
   }
+\fi
+
+\ifmathexam@sidebyside
   \RequirePackage{pgfpages}
   \ifmathexam@fixlast
     \preto{\@enddocumenthook}{
@@ -1236,7 +1260,11 @@ and the derived files           mathexam.ins,
 \preto{\@enddocumenthook}{
   \if@filesw
     \immediate\write\@mainaux
-    {\string\gdef\string\mathexam@totalpages{\arabic{page}}}%
+    \ifmathexam@fixlast
+      {\string\gdef\string\mathexam@totalpages{\number\numexpr\arabic{page}+1}}%
+    \else
+      {\string\gdef\string\mathexam@totalpages{\arabic{page}}}%
+    \fi
   \fi
   \DTLsavedb{\jobname}{\jobname.dat}
   \DTLsavetexdb{\jobname}{\jobname.dbtex}
@@ -1260,7 +1288,7 @@ and the derived files           mathexam.ins,
 %</package>
 %<*maintex>
 \documentclass[cs4size]{article}
-\usepackage[a3paper]{mathexam} %showans
+\usepackage[a3paper,nospace,fixlast]{mathexam} %showans
 \usepackage{hyperref}
 \hypersetup{
   colorlinks,
@@ -1417,7 +1445,7 @@ and the derived files           mathexam.ins,
     \end{solution}
   \end{problem}
 \end{makepart}
-\clearpage
+%\clearpage
 \begin{makepart}{计算题}[10]
   \renewcommand{\solutionname}{解}
   \begin{problem}
@@ -1471,7 +1499,7 @@ and the derived files           mathexam.ins,
     \end{solution}
   \end{problem}
 \end{makepart}
-\clearpage
+%\clearpage
 \begin{makepart}{证明题}
   \renewcommand{\solutionname}{证}
   \begin{problem}[10]
@@ -1521,7 +1549,7 @@ and the derived files           mathexam.ins,
     \end{solution}
   \end{problem}
 \end{makepart}
-\clearpage
+%\clearpage
 \begin{makepart}[共1题, 每小问10分, 共计30分]{应用题}
   \begin{problem}[30]
     如图所示,

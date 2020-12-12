@@ -6,7 +6,7 @@
 .PHONY : main pkg maintex mainanstex doc clean all FORCE_MAKE
 
 NAME = mathexam
-VER= v2.2.1
+VER= v2.3.0
 ZIPNAME= $(NAME)-$(VER).zip
 UTREE = $(shell kpsewhich --var-value TEXMFHOME)
 LOCAL = $(shell kpsewhich --var-value TEXMFLOCAL)
@@ -40,7 +40,6 @@ maintex :$(NAME)-main.tex FORCE_MAKE
 
 mainanstex : $(NAME)-main-answer.tex FORCE_MAKE
 	latexmk -xelatex -shell-escape -use-make $<
-
 clean :
 	latexmk -c
 	latexmk -c $(NAME).dtx
