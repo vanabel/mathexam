@@ -1,76 +1,168 @@
 \NeedsTeXFormat{LaTeX2e}[1994/06/01]
 \ProvidesPackage{mathquiz}[2019/11/07 A package for math quizzes]
-\RequirePackage[margin=.5in, includeheadfoot]{geometry}
+\RequirePackage[a4paper,margin=.5in,includeheadfoot]{geometry}
+
 \RequirePackage[heading]{ctex}
 \RequirePackage{mathtools,amssymb}
 \RequirePackage{multido, ifthen}
+\RequirePackage{ulem}
 \RequirePackage{lastpage}
-\RequirePackage{fancyhdr}
-\RequirePackage{xparse, environ}
+\RequirePackage{tabularx}
+\RequirePackage{enumitem}
+\RequirePackage{etoolbox,xparse, environ,ifthen}
 \ctexset {
+  part = {
+    name ={},
+    number = {},
+    %format = \large\bfseries\raggedright
+  },
   section = {
     name = {,、},
     number = \chinese{section},
     format = \large\bfseries\raggedright
   }
 }
-\newif\ifmathquiz@showans\mathquiz@showansfalse
-\DeclareOption{showans}{
-  \mathquiz@showanstrue
-}
-%跳过答案对应高度的垂直空白
-\newcounter{cnt}
-\newcommand{\ansskip}[1]{
-  \setcounter{cnt}{0}
-  \whiledo {\value{cnt} <100}
-  {
-    \vspace*{.01#1}\goodbreak
-    \stepcounter{cnt}
-  }
-}
-%第一个可选参数: 答题的标题;
-%第二个可选参数: 答题在标准答案上增加的高度;
-%\begin{ans}[解][4em]
-% 解题答案
-%\end{ans}
-\newlength\ansheight
-\NewDocumentEnvironment{ans}{O{答} O{2em}}
-{\Environenv{
-  \textbf{#1}:~}{#2}
-}
-{\endEnvironenv}
-\newbox{\ansbox}
-\environbodyname\envbody
-\NewEnviron{Environenv}[2]{%
-  \savebox{\ansbox}{
-    \parbox[b]{\linewidth}{
-      #1\envbody
-    }
-  }
-  \settoheight{\ansheight}{\usebox\ansbox}
-  \ifmathquiz@showans 
-    \par#1\envbody
-  \else
-  \addtolength{\ansheight}{#2}
-    \ansskip{\ansheight}
-  \fi
-}
-%% set the header/footer
-\newcommand{\univname}[1]{\def\mathquiz@value@univname{#1}}
-\newcommand{\coursename}[1]{\def\mathquiz@value@coursename{#1}}
-\newcommand{\totaltime}[1]{\def\mathquiz@value@totaltime{#1}}
+\RequirePackage{calc,refcount}
+\RequirePackage{fancyhdr}
 
-\fancyhf{}
-\lhead{\mathquiz@value@univname《\mathquiz@value@coursename》课程考试}
+\newif\ifshowans\showansfalse
+\DeclareOption{showans}{\showanstrue}
+\newif\ifnospace\nospacefalse
+\DeclareOption{nospace}{\nospacetrue}
+\newif\iftwoside\twosidefalse
+\DeclareOption{A3}{\twosidetrue}
 
-\chead{总时间: \mathquiz@value@totaltime 分钟}
-\rhead{姓名\hspace{3em}学号\hspace{7em}成绩\hspace{3em}}
-\lfoot{}
-\cfoot{第 \thepage 页\quad 共 \pageref{LastPage} 页}
-\rfoot{}
-\pagestyle{fancy}%headings,plain
 %Set the showans is the default
 %\ExecuteOptions{showans}
 \ProcessOptions\relax
 
-\endinput
+\iftwoside
+  \geometry{a3paper,twocolumn,landscape,hmargin={3.5cm,1.3cm},vmargin={1.5cm,1.5cm},footskip=0.75cm,headsep=0.25cm}
+  \setlength{\columnseprule}{0.4pt}
+  \setlength{\columnsep}{1.5cm}
+\fi
+
+%% 页眉和页脚
+\renewcommand{\headrulewidth}{0pt}
+\fancypagestyle{mathquiz}{
+  \fancyhf{} % clear all header and footer fields
+  \iftwoside
+    \fancyfoot[CE,CO]{\kaishu{}
+      第~\the\numexpr2*\value{page}-1\relax~页~/~共~\the\numexpr2*\getpagerefnumber{mylastpage}\relax~页
+      \hspace*{.5\linewidth}
+      第~\the\numexpr2*\value{page}\relax~页~/~共~\the\numexpr2*\getpagerefnumber{mylastpage}\relax~页
+    }
+  \else
+    \fancyfoot[C]{\kaishu{}%
+      第~\thepage\relax~页~/~共~\getpagerefnumber{mylastpage}\relax~页
+    }
+  \fi
+}
+\AtBeginDocument{\maketitle\thispagestyle{mathquiz}\pagestyle{mathquiz}}
+
+%% showans 显示解答环境
+\newcommand{\answer}[1]{\ifshowans#1\else\phantom{#1}\fi}
+%% 判断题
+\newcommand{\cdotfill}{%
+  \leavevmode\xleaders\hbox to 0.5em{\hss$\cdot$\hss}\hfill\kern0pt\relax
+}
+\newcommand{\true}{%
+  \unskip\nobreak\cdotfill(\makebox[1.5em]{\answer{$\checkmark$}})%
+}%
+\newcommand{\false}{%
+  \unskip\nobreak\cdotfill(\makebox[1.5em]{\answer{\sffamily x}})%
+}%
+%% 填空题
+\newcommand{\ulinefill}[1]{%
+  \xleaders\hbox{\uline{\vphantom{#1}\kern1pt}}\hfill\kern0pt%
+}
+\newcommand{\fillin}[2][1em]{%
+  \uline{\hspace{#1}\answer{#2}\hspace{#1}}
+}
+\newcommand{\fillout}[1]{%
+  \allowbreak\hbox{}\nobreak\ulinefill{#1}\uline{\answer{#1}}\ulinefill{#1}
+}
+%% 选择题
+\newcommand{\pickout}[1]{%
+  %\addtocounter{score}{\theprescore}
+  \unskip\nobreak\cdotfill(\makebox[1.5em]{\answer{#1}})
+}
+\newcounter{choice}
+\newenvironment{problem}{\setcounter{choice}{0}\noindent}{\par}
+\newlength{\my@item@len}
+\newcommand\my@item@temp{%
+  \unskip\cr\stepcounter{choice}(\Alph{choice})\ %
+}
+\newcommand\my@item@box{%
+  \hfill\egroup\hfill\hbox to \my@item@len\bgroup
+  \stepcounter{choice}(\Alph{choice})\ \ignorespaces
+}
+\newcommand\my@item@par{%
+  \par\stepcounter{choice}(\Alph{choice})\ \ignorespaces
+}
+\NewEnviron{abcd}{
+  \unskip
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{0pt}%
+  \setcounter{choice}{0}%
+  \let\item=\my@item@temp
+  \settowidth{\my@item@len}{\vbox{\halign{##\hfil\cr\BODY\crcr}}}%
+  \setcounter{choice}{0}%
+  \ifdim\my@item@len>0.486\linewidth
+    \setlength{\my@item@len}{\linewidth}%
+    \let\item=\my@item@par
+    \BODY\par
+  \else
+    \ifdim\my@item@len>.243\linewidth
+      \setlength{\my@item@len}{0.5\linewidth}%
+    \else
+      \setlength{\my@item@len}{0.25\linewidth}%
+    \fi
+    \let\item=\my@item@box
+    \par\bgroup\BODY\hfill\egroup\par
+    \fi
+  }
+  %% \score 评分
+  \newcommand{\score}[1]{%
+    \ifmmode%
+      \tag*{$\cdots\cdots$(#1\, 分)}
+    \else%
+      \cdotfill(#1\, 分)\par\noindent
+    \fi
+  }
+  \newlength\ansheight
+  \newcounter{cnt}
+  \newcommand{\ansskip}[1]{
+    \setcounter{cnt}{0}
+    \whiledo {\value{cnt} <100}
+    {
+      \vspace*{.01#1}\goodbreak
+      \stepcounter{cnt}
+    }
+  }
+  \newbox{\ansbox}
+  \def\solutionname{解}
+  \NewDocumentEnvironment{solution}{O{0em} O{\solutionname} +b}
+  { \savebox{\ansbox}{
+    \parbox[b]{\linewidth}{#3}}
+    \settoheight{\ansheight}{\usebox\ansbox}
+    \ifshowans
+      \par\noindent\textbf{#2}:~#3\hfill$\square$\par
+    \else
+      \ifnospace
+        \setlength{\ansheight}{0em}
+      \else
+        \addtolength{\ansheight}{#1}
+      \fi
+      \ansskip{\ansheight}
+      \fi
+    }{\par}
+
+    \NewDocumentEnvironment{rmk}{+b}{
+      \ifshowans
+        \par\noindent\textbf{注}: #1\par
+      \fi
+    }
+
+
+    \endinput
