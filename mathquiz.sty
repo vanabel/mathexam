@@ -10,18 +10,6 @@
 \RequirePackage{tabularx}
 \RequirePackage{enumitem}
 \RequirePackage{etoolbox,xparse, environ,ifthen}
-\ctexset {
-  part = {
-    name ={},
-    number = {},
-    %format = \large\bfseries\raggedright
-  },
-  section = {
-    name = {,、},
-    number = \chinese{section},
-    format = \large\bfseries\raggedright
-  }
-}
 \RequirePackage{calc,refcount}
 \RequirePackage{fancyhdr}
 
@@ -31,6 +19,8 @@
 \DeclareOption{nospace}{\nospacetrue}
 \newif\iftwoside\twosidefalse
 \DeclareOption{A3}{\twosidetrue}
+\newif\ifen\enfalse
+\DeclareOption{en}{\entrue}
 
 %Set the showans is the default
 %\ExecuteOptions{showans}
@@ -42,19 +32,66 @@
   \setlength{\columnsep}{1.5cm}
 \fi
 
+% Define section settings based on the condition
+\ifen
+  \def\sectionname{Section\,}
+  \def\sectionnumber{\arabic{section}.}
+  \def\sectionformat{\large\bfseries\raggedright}
+\else
+  \def\sectionname{}
+  \def\sectionnumber{\chinese{section}、}
+  \def\sectionformat{\large\bfseries\raggedright}
+\fi
+\ctexset {
+  part = {
+    name ={},
+    number = {},
+    %format = \large\bfseries\raggedright
+  },
+  section = {
+    name = \sectionname,
+    number = \sectionnumber,
+    format = \sectionformat
+  }
+}
 %% 页眉和页脚
+% Define a \subtitle command
+\newcommand{\subtitle}[1]{%
+  \def\@mathquizsubtitle{#1}%
+}
+
+% Default subtitle if not set
+\def\@mathquizsubtitle{}
+% Command to use the subtitle with conditional \qquad
+\newcommand{\printmathquizsubtitle}{%
+  \ifx\@mathquizsubtitle\@empty
+    % If empty, do nothing
+  \else
+    \@mathquizsubtitle\qquad % If not empty, add subtitle with \qquad
+  \fi
+}
 \renewcommand{\headrulewidth}{0pt}
 \fancypagestyle{mathquiz}{
   \fancyhf{} % clear all header and footer fields
   \iftwoside
     \fancyfoot[CE,CO]{\kaishu{}
-      第~\the\numexpr2*\value{page}-1\relax~页~/~共~\the\numexpr2*\getpagerefnumber{mylastpage}\relax~页
-      \hspace*{.5\linewidth}
-      第~\the\numexpr2*\value{page}\relax~页~/~共~\the\numexpr2*\getpagerefnumber{mylastpage}\relax~页
+      \ifen
+        \printmathquizsubtitle Page~\the\numexpr2*\value{page}-1\relax~of~\the\numexpr2*\getpagerefnumber{mylastpage}\relax~pages
+        \hspace*{.5\linewidth}
+        \printmathquizsubtitle Page~\the\numexpr2*\value{page}\relax~of~\the\numexpr2*\getpagerefnumber{mylastpage}\relax~pages
+      \else
+        \printmathquizsubtitle 第~\the\numexpr2*\value{page}-1\relax~页~/~共~\the\numexpr2*\getpagerefnumber{mylastpage}\relax~页
+        \hspace*{.5\linewidth}
+        \printmathquizsubtitle 第~\the\numexpr2*\value{page}\relax~页~/~共~\the\numexpr2*\getpagerefnumber{mylastpage}\relax~页
+      \fi
     }
   \else
-    \fancyfoot[C]{\kaishu{}%
-      第~\thepage\relax~页~/~共~\getpagerefnumber{mylastpage}\relax~页
+    \fancyfoot[C]{
+      \ifen
+        \printmathquizsubtitle Page~\thepage\relax~of~\getpagerefnumber{mylastpage}\relax~pages
+      \else
+        \printmathquizsubtitle 第~\thepage\relax~页~/~共~\getpagerefnumber{mylastpage}\relax~页
+      \fi
     }
   \fi
 }
