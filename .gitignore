@@ -34,6 +34,8 @@
 *.blg
 *.bcf
 *.run.xml
+*.glo
+*.gls
 
 # Generated package files (keep .dtx)
 *.sty
