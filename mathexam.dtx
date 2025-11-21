@@ -603,6 +603,7 @@ and the derived files           mathexam.ins,
 \RequirePackage{mathtools, amssymb, amsthm}
 \RequirePackage[contents={}]{background}
 \RequirePackage{ctex}
+\RequirePackage{ulem}
 \RequirePackage{bookmark}
 \RequirePackage{geometry}
 \RequirePackage{tabu}
@@ -706,13 +707,36 @@ and the derived files           mathexam.ins,
 \newcounter{temp}
 \setcounter{temp}{0}
 \def\tand{&}
+% 辅助命令：手动累加数据库中的数值
+\newcounter{mathexam@sumtemp}
+\newcommand{\mathexam@sumcolumn}[3]{%
+  % #1 = 数据库名, #2 = 列名, #3 = 结果宏
+  \setcounter{mathexam@sumtemp}{0}%
+  \ifnum\DTLcolumncount{#1}>2\relax
+    \ifnum\DTLrowcount{#1}>0\relax
+      % 使用 DTLforeach 遍历所有行，累加指定列的值
+      \DTLforeach*{#1}{\mathexam@val=#2}{%
+        % 使用 \numexpr 将值转换为数字并累加
+        % 先展开值，然后转换为数字
+        \edef\mathexam@expval{\mathexam@val}%
+        \edef\mathexam@numval{\number\numexpr\mathexam@expval\relax}%
+        \addtocounter{mathexam@sumtemp}{\mathexam@numval}%
+      }%
+      \edef#3{\themathexam@sumtemp}%
+    \else
+      \let#3\tobecalculate%
+    \fi
+  \else
+    \let#3\tobecalculate%
+  \fi
+}
 \ifnum0\DTLcolumncount{\jobname}>2%
-  \DTLsumforkeys{\jobname}{problem}{\totalproblems}%
+  \mathexam@sumcolumn{\jobname}{problem}{\totalproblems}%
 \else%
   \let\totalproblems\tobecalculate%
 \fi%
 \ifnum0\DTLcolumncount{\jobname}>2%
-  \DTLsumforkeys{\jobname}{score}{\totalscores}%
+  \mathexam@sumcolumn{\jobname}{score}{\totalscores}%
 \else%
   \let\totalscores\tobecalculate%
 \fi%
@@ -1258,17 +1282,39 @@ and the derived files           mathexam.ins,
   \pgfpagesuselayout{2 on 1}[a3paper, border shrink=5mm,landscape]
 \fi
 
-\preto{\@enddocumenthook}{
+% 在文档输出时保存当前页数
+\AtEndDocument{%
   \if@filesw
-    \immediate\write\@mainaux
-    \ifmathexam@fixlast
-      {\string\gdef\string\mathexam@totalpages{\number\numexpr\arabic{page}+1}}%
-    \else
-      {\string\gdef\string\mathexam@totalpages{\arabic{page}}}%
-    \fi
+    % 使用 \@abspage@last 获取最后一页的绝对页数（如果可用）
+    % 否则使用当前的 page 计数器值
+    \@ifundefined{@abspage@last}{%
+      % \@abspage@last 未定义，使用 page 计数器
+      \ifmathexam@fixlast
+        \immediate\write\@mainaux{%
+          \string\gdef\string\mathexam@totalpages{\number\numexpr\arabic{page}+1}%
+        }%
+      \else
+        \immediate\write\@mainaux{%
+          \string\gdef\string\mathexam@totalpages{\arabic{page}}%
+        }%
+      \fi
+    }{%
+      % 使用 \@abspage@last（这是 LaTeX 内核提供的最后一页的绝对页数）
+      \ifmathexam@fixlast
+        \immediate\write\@mainaux{%
+          \string\gdef\string\mathexam@totalpages{\number\numexpr\@abspage@last+1}%
+        }%
+      \else
+        \immediate\write\@mainaux{%
+          \string\gdef\string\mathexam@totalpages{\@abspage@last}%
+        }%
+      \fi
+    }%
   \fi
-  \DTLsavedb{\jobname}{\jobname.dat}
-  \DTLsavetexdb{\jobname}{\jobname.dbtex}
+}
+\preto{\@enddocumenthook}{
+  \DTLwrite[name=\jobname, overwrite=allow, format=csv, expand=none, add-delimiter=detect]{\jobname.dat}
+  \DTLwrite[name=\jobname, overwrite=allow, format=dbtex-2, expand=full]{\jobname.dbtex}
   \IfFileExists{\jobname.dat}{}{\DTLdisplaydb{\jobname}}
 }
 \ifmathexam@showans{%
@@ -1288,8 +1334,8 @@ and the derived files           mathexam.ins,
 \fi
 %</package>
 %<*maintex>
-\documentclass[cs4size]{article}
-\usepackage[a3paper,nospace,fixlast]{mathexam} %showans
+\documentclass[zihao=-4]{article}
+\usepackage[nospace]{mathexam} %showans
 \usepackage{hyperref}
 \hypersetup{
   colorlinks,
@@ -1300,7 +1346,7 @@ and the derived files           mathexam.ins,
 \input{main}
 %</maintex>
 %<*mainanstex>
-\documentclass[cs4size]{article}
+\documentclass[zihao=-4]{article}
 \usepackage[showans]{mathexam} %showans
 \usepackage{hyperref}
 \hypersetup{
