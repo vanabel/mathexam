@@ -156,7 +156,7 @@ and the derived files           mathexam.ins,
 %<*driver>
 \documentclass{ltxdoc}%[draft]
 \usepackage{palatino}
-\usepackage[cs4size]{ctex}
+\usepackage[zihao=-4]{ctex}
 \usepackage[margin=1in, left=1.2in, includeheadfoot]{geometry}
 \usepackage[numbered]{hypdoc}
 \usepackage{metalogo}
@@ -693,6 +693,7 @@ and the derived files           mathexam.ins,
   bottom=\mybottom,
   headheight=\myhead,
   includeheadfoot,
+  footskip=40.2pt,
   twoside
 }
 
@@ -744,82 +745,34 @@ and the derived files           mathexam.ins,
   \pagestyle{plain} %plain
   \settowidth{\headertextlen}{\myheader}
   \ifmathexam@sidebyside
-      \AddEverypageHook{%
-        \ifthenelse{\isodd{\value{page}}}%
-        {
-          %% The header line
-          \AddToShipoutPictureBG*{
-            % Add background picture to every page/ *version for current page
-            \begin{tikzpicture}[overlay,remember picture]
-              \draw [line width=1pt ]
-              ($(current page text area.north west)-(.6\myinner,0pt)$)
-              to
-              ($(current page text area.north east)$);
-              \draw [line width=1pt]
-              ($(current page footer area.south west)-(.6\myinner,0pt)$)
-              to
-              ($(current page footer area.south east)$);
-            \end{tikzpicture}
-          }
-          \newgeometry{
-            top=\mytop,
-            inner=\myinner,
-            outer=\myouter,
-            bottom=\mybottom,
-            headheight=\myhead,
-            includeheadfoot,
-            twoside
-          }
-          \backgroundsetup{
-            color=black,
-            angle=90,
-            scale=1.01,
-            opacity=1,
-            position={-\myinner+\myleft,-\textheight/2},
-            vshift=5.5pt,
-            hshift=13pt,
-            contents={
-              \begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c}
-                \hline 学院            &
-                \hspace*{3\lefttable}  &
-                专业                   &
-                \hspace*{3\lefttable}  &
-                年级                   &
-                \hspace*{2\lefttable}  &
-                班                     &
-                \hspace*{2\lefttable}  &
-                姓名                   &
-                \hspace*{3\lefttable}  &
-                学号                   &
-                \hspace*{3\lefttable} \\
-                \hline
-                \multicolumn{12}{c}{
-                  \mathexam@barfill\mathexam@barfilltext{线}
-                  \mathexam@barfill\mathexam@barfilltext{封}
-                  \mathexam@barfill\mathexam@barfilltext{密}
-                \mathexam@barfill}    \\
-                \hline
-              \end{tabular}
-            }
-          }
-          }{
-          \restoregeometry
-          \AddToShipoutPictureBG*{
-            % Add background picture to every page/ *version for current page
-            \begin{tikzpicture}[overlay,remember picture]
-              \draw [line width=1pt ]
-              ($(current page text area.north west)-0.8*(\myleft,0)$)
-              to
-              ($(current page text area.north east)-0.8*(\myleft,0)$);
-              \draw [line width=1pt]
-              ($(current page footer area.south west)-.8*(\myleft,0)$)
-              to
-              ($(current page footer area.south east)-0.8*(\myleft,0)$);
-            \end{tikzpicture}
-          }
-        }
-        \BgMaterial
-  }\fi
+      % 预先准备旋转的表格内容
+      \newsavebox{\mathexam@rotatedtable}
+      \savebox{\mathexam@rotatedtable}{%
+        \begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c}
+          \hline 学院            &
+          \hspace*{3\lefttable}  &
+          专业                   &
+          \hspace*{3\lefttable}  &
+          年级                   &
+          \hspace*{2\lefttable}  &
+          班                     &
+          \hspace*{2\lefttable}  &
+          姓名                   &
+          \hspace*{3\lefttable}  &
+          学号                   &
+          \hspace*{3\lefttable} \\
+          \hline
+          \multicolumn{12}{c}{
+            \mathexam@barfill\mathexam@barfilltext{线}
+            \mathexam@barfill\mathexam@barfilltext{封}
+            \mathexam@barfill\mathexam@barfilltext{密}
+          \mathexam@barfill}    \\
+          \hline
+        \end{tabular}%
+      }%
+      % Mark that the rotated table is ready
+      \global\let\mathexam@table@ready\relax
+  \fi
   \ifthenelse{\value{page}=1}{
     %% The header
     \newgeometry{
@@ -829,6 +782,7 @@ and the derived files           mathexam.ins,
       bottom=\mybottom,
       headheight=\myhead,
       includeheadfoot,
+      footskip=40.2pt,
       twoside
     }
     \begin{center}
@@ -954,6 +908,8 @@ and the derived files           mathexam.ins,
   \ifmathexam@sidebyside
     \renewcommand{\headrulewidth}{0pt}
     \renewcommand{\footrulewidth}{0pt}
+    \setlength{\headsep}{0.3in}
+    \setlength{\footskip}{0.6in}
   \else
     \renewcommand{\headrulewidth}{0.8pt}
     \renewcommand{\footrulewidth}{0.8pt}
@@ -972,21 +928,21 @@ and the derived files           mathexam.ins,
     \ifthenelse{\value{page}=1}{%\isodd{\value{page}}
       \zihao{-5}
       \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}clclclc}
-	\ifmathexam@sidebyside\\[2em]\fi
+\ifmathexam@sidebyside\\[1em]\fi
         命题教师:                             &
         \mathexam@value@examiner              &
         教研室或系负责人:                     &
         \mathexam@value@director              &
         主管院长:                             &
         \mathexam@value@dean                  &
-	\the\year 年\the\month 月\the\day 日 \\[2em]
+\the\year 年\the\month 月\the\day 日 \\[1em]
         \multicolumn{7}{c}{
           \mathexam@value@AorB 卷\quad%
           第 \thepage 页, 共 \totalnumpages 页%
         }
       \end{tabular*}
       }{
-      \ifmathexam@sidebyside\vspace*{2em}\fi
+      \ifmathexam@sidebyside\vspace*{1em}\fi
       第 \thepage 页, 共 \totalnumpages 页%
     }
   }
@@ -1104,7 +1060,7 @@ and the derived files           mathexam.ins,
 }
 \newcommand{\fillout}[1]{%
   \stepcounter{totalblanks}
-  \allowbreak\hbox{}\nobreak\ulinefill{#1}\uline{\answer{#1}}\ulinefill{#1}
+  \allowbreak\leavevmode\hbox{}\nobreak\ulinefill{#1}\uline{\answer{#1}}\ulinefill{#1}
 }
 %% 选择题
 \newcommand{\pickout}[1]{%
@@ -1274,11 +1230,65 @@ and the derived files           mathexam.ins,
   \RequirePackage{pgfpages}
   \ifmathexam@fixlast
     \preto{\@enddocumenthook}{
-      %insert an enpty page for odd total page
+      %insert an empty page for odd total page
       \clearpage
-      \thinspace
+      \null
+      \thispagestyle{empty}
     }
   \fi
+  % Register hook for header/footer lines and rotated table on all pages
+  % Use \AtBeginShipout to ensure it works on all pages including the first page
+  \AtBeginShipout{%
+    \AddToShipoutPictureBG*{%
+      % Add background picture to every page/ *version for current page
+      \begin{tikzpicture}[overlay,remember picture]
+        % Use \ifodd for more reliable page number check
+        \ifodd\value{page}%
+          % Odd pages: header and footer lines
+          % Use absolute coordinates relative to page margins
+          % Header line: from left margin to right margin, at header height
+          \coordinate (header start) at ($(current page.north west)+(0.38\myleft,-\mytop-\myhead)$);
+          \coordinate (header end) at ($(current page.north east)+(-\myouter,-\mytop-\myhead)$);
+          % Footer line: from left margin to right margin, accounting for footskip
+          \coordinate (footer start) at ($(current page.south west)+(0.38\myleft,\mybottom+15pt)$);
+          \coordinate (footer end) at ($(current page.south east)+(-\myouter,\mybottom+15pt)$);
+          \draw [line width=1pt] (header start) -- (header end);
+          \draw [line width=1pt] (footer start) -- (footer end);
+        \else
+          % Even pages: header and footer lines with smaller offset
+          \coordinate (header start) at ($(current page.north west)+(0.5\myleft,-\mytop-\myhead)$);
+          \coordinate (header end) at ($(current page.north east)+(-2.4\myouter,-\mytop-\myhead)$);
+          \coordinate (footer start) at ($(current page.south west)+(0.5\myleft,\mybottom+15pt)$);
+          \coordinate (footer end) at ($(current page.south east)+(-2.5\myouter,\mybottom+15pt)$);
+          \draw [line width=1pt] (header start) -- (header end);
+          \draw [line width=1pt] (footer start) -- (footer end);
+        \fi
+      \end{tikzpicture}%
+    }%
+  }
+    % Check if page is odd - use \ifodd instead of \ifthenelse for more reliable check
+    % In a3paper mode with pgfpages, the page numbering might be affected
+  \AddEverypageHook{
+    \ifodd\value{page}%
+      % Odd pages: add rotated table on left side using backgroundsetup
+      % Check if the table is ready (it will be after \makehead is called)
+      \ifx\mathexam@table@ready\relax
+        \backgroundsetup{
+          color=black,
+          angle=90,
+          scale=1.025,
+          opacity=1,
+          position={-\myinner+\myleft,-\textheight/2},
+          vshift=20pt,
+          hshift=20pt,
+          contents={
+            \usebox{\mathexam@rotatedtable}%
+          }
+        }%
+        \BgMaterial
+      \fi
+    \fi
+  }%
   \pgfpagesuselayout{2 on 1}[a3paper, border shrink=5mm,landscape]
 \fi
 
