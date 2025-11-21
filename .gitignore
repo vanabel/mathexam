@@ -1,0 +1,62 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor temporary files
+*.swp
+*.swo
+*~
+.*.swp
+.*.swo
+*.vim
+
+# LaTeX auxiliary files
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.synctex(busy)
+*.nav
+*.snm
+*.vrb
+*.xdv
+*.idx
+*.ilg
+*.ind
+*.hd
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+
+# Generated package files (keep .dtx)
+*.sty
+*.sty.bak
+*.ins
+*.pdf
+
+# Generated main files (all generated from .dtx)
+mathexam-main.*
+mathexam-main-answer.*
+
+# Data files
+*.dat
+*.dbtex
+
+# Test files
+main.tex
+
+# Distribution files
+*.zip
+*.tar.gz
+*.tar.bz2
+
+# README.txt is generated from .dtx
+README.txt
+
