@@ -3,7 +3,7 @@
 > 一个专业的 LaTeX 数学考试出题宏包
 
 [![License](https://img.shields.io/badge/license-LPPL%201.3c-blue.svg)](http://www.latex-project.org/lppl.txt)
-[![Version](https://img.shields.io/badge/version-v2.3.1-green.svg)](https://github.com/vanabel/mathexam/releases)
+[![Version](https://img.shields.io/badge/version-v2.3.2-green.svg)](https://github.com/vanabel/mathexam/releases)
 [![LaTeX](https://img.shields.io/badge/LaTeX-2.09%2B-orange.svg)](https://www.latex-project.org/)
 
 `mathexam` 是一个专为数学类考试设计的 LaTeX 宏包，提供了完整的试卷排版解决方案。它能够自动生成规范的试卷格式，包括试卷头、计分表格、答题区域等，支持多种题型，并可以方便地生成试卷和参考答案。
@@ -200,11 +200,18 @@ make clean    # 清理临时文件
 
 ## 📝 更新日志
 
-### v2.3.1 (2024)
+### v2.3.2 (2026/10/14)
+- 🐛 为未设置的试卷信息宏提供默认空值，避免 `Undefined control sequence`
+- 🐛 移除 `showans` 在宏包加载时错误执行的 PDF 复制（XeLaTeX 下 PDF 尚不存在）
+- 🐛 修正重复且过时的 `\ProvidesPackage` 声明
+- 🐛 `make pkg` 不再覆盖手写维护的 `README.md`
+- 🐛 修复 a3paper 使用未加载的 `\AtBeginShipout`（改为 eso-pic 每页背景）
+
+### v2.3.1 (2025/11/22)
 - ✨ 改进 datatool 相关代码，修复数值累加问题
 - 🐛 修复总页数计算，使用 `\@abspage@last` 确保准确性
 - 🔄 更新数据库保存方法，使用更标准的 `\DTLwrite` API
-- 📝 更新文档类选项
+- 🐛 修复 a3paper 模式下的页眉/页脚线条定位和旋转表格显示问题
 
 ### v2.3.0 (2020/12/12)
 - ✨ 添加答题卡命令 `\answertable`
