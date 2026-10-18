@@ -1,0 +1,22 @@
+% !TeX program = XeLaTeX
+% Academic-year boundary checks for mathexam (compile after generating mathexam.sty).
+\documentclass[zihao=-4]{article}
+\usepackage{mathexam}
+\begin{document}
+\noindent\textbf{mathexam academic year tests}\par\medskip
+\examdate{2026}{8}{31}\par
+2026-08-31: \academicyearrange\quad (expect 2025至2026学年)\par\medskip
+\examdate{2026}{9}{1}\par
+2026-09-01: \academicyearrange\quad (expect 2026至2027学年)\par\medskip
+\examdate{2026}{10}{18}\par
+2026-10-18: \academicyearrange\quad (expect 2026至2027学年)\par\medskip
+\examdate{2027}{3}{1}\par
+2027-03-01: \academicyearrange\quad (expect 2026至2027学年)\par\medskip
+\examdate{2027}{8}{31}\par
+2027-08-31: \academicyearrange\quad (expect 2026至2027学年)\par\medskip
+\examdate{2027}{9}{1}\par
+2027-09-01: \academicyearrange\quad (expect 2027至2028学年)\par\medskip
+\examdate{2026}{10}{18}\par
+\academicyear{2020}{2021}\par
+Override: \academicyearrange\quad (expect 2020至2021学年)\par
+\end{document}
