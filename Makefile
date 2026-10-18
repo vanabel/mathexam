@@ -3,10 +3,10 @@
 # Also, include non-file targets in .PHONY
 # so they are run regardless of any
 # file of the given name existing.
-.PHONY : main pkg maintex mainanstex doc clean all FORCE_MAKE
+.PHONY : main pkg maintex mainanstex acyeartest doc clean all FORCE_MAKE
 
 NAME = mathexam
-VER= v2.3.2
+VER= v2.3.3
 ZIPNAME= $(NAME)-$(VER).zip
 UTREE = $(shell kpsewhich --var-value TEXMFHOME)
 LOCAL = $(shell kpsewhich --var-value TEXMFLOCAL)
@@ -40,6 +40,9 @@ maintex :$(NAME)-main.tex FORCE_MAKE
 
 mainanstex : $(NAME)-main-answer.tex FORCE_MAKE
 	latexmk -xelatex -shell-escape -use-make $<
+
+acyeartest : $(NAME).sty $(NAME)-acyear-test.tex FORCE_MAKE
+	latexmk -xelatex -use-make $(NAME)-acyear-test.tex
 clean :
 	latexmk -c
 	latexmk -c $(NAME).dtx
